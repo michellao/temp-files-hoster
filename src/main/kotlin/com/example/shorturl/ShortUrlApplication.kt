@@ -1,11 +1,11 @@
-package com.example.demo
+package com.example.shorturl
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class DemoApplication
+class ShortUrlApplication
 
 fun main(args: Array<String>) {
-    runApplication<DemoApplication>(*args)
+    runApplication<ShortUrlApplication>(*args)
 }
