@@ -1,7 +1,7 @@
 package com.example.shorturl.datasource.service
 
 import com.example.shorturl.datasource.Account
-import com.example.shorturl.datasource.AccountRepository
+import com.example.shorturl.datasource.repository.AccountRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
