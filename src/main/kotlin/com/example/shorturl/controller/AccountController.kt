@@ -1,4 +1,4 @@
-package com.example.shorturl
+package com.example.shorturl.controller
 
 import com.example.shorturl.datasource.Account
 import com.example.shorturl.datasource.service.AccountService
