@@ -26,8 +26,8 @@ class S3ClientData(private val s3Client: S3Client) {
             .body(response.readAllBytes())
     }
 
-    fun writeData(key: String, inputStream: InputStream, contentType: String): PutObjectResponse? {
-        val putObjectRequest = PutObjectRequest.builder().bucket(this.bucketName).key(key).contentType(contentType).build()
+    fun writeData(k: String, inputStream: InputStream, contentType: String): PutObjectResponse? {
+        val putObjectRequest = PutObjectRequest.builder().bucket(this.bucketName).key(k).contentType(contentType).build()
         val requestBody = RequestBody.fromBytes(inputStream.readBytes())
         val response = s3Client.putObject(putObjectRequest, requestBody)
         return response
