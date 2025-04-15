@@ -2,19 +2,21 @@ package com.example.shorturl.datasource
 
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.MappedCollection
 
-@Table("ACCOUNT")
+@Table
 data class Account(
     val apiKey: String,
     val isAdmin: Boolean = false,
-    @Id var id: Int?
+    @Id var id: Int? = null
 )
 
-@Table("URL")
+@Table
 data class Url(
-    val originalFilename: String,
+    val originalFilename: String?,
     val urlPath: String,
-    val mimeType: String,
-    val account: Account?,
-    @Id var id: Int?
+    val contentType: String,
+    @MappedCollection(idColumn = "accountId", keyColumn = "id")
+    val account: Account? = null,
+    @Id var id: Int? = null
 )
