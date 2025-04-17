@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.multipart.MultipartFile
+import kotlin.math.pow
 
 @Controller
 class FileUploadController(private val service: UrlService, private val s3: S3ClientData) {
@@ -21,11 +22,17 @@ class FileUploadController(private val service: UrlService, private val s3: S3Cl
         if (!file.isEmpty) {
             val contentType = file.contentType ?: MediaType.APPLICATION_OCTET_STREAM.toString()
             val originalFileName = file.originalFilename
-            val generatedUrl = UrlHandler.generatorURL(14)
+            val sizeMebibytes = (file.size / 2.0.pow(20)).toLong()
+            var generatedUrl: String
+            do {
+                generatedUrl = UrlHandler.generatorURL(14)
+                val findUrl = service.findByUrl("/$generatedUrl")
+            } while (findUrl != null)
             val url = Url(
                 originalFileName,
                 "/$generatedUrl",
-                contentType
+                contentType,
+                sizeMebibytes,
             )
             println("Url: $url")
             service.save(url)
@@ -33,12 +40,5 @@ class FileUploadController(private val service: UrlService, private val s3: S3Cl
             return "/$generatedUrl"
         }
         return "error uploaded"
-    }
-
-    @GetMapping("/", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.TEXT_PLAIN_VALUE])
-    @ResponseBody
-    fun getDataTest(): ResponseEntity<ByteArray> {
-        val inputStream = s3.readData("test")
-        return inputStream
     }
 }
