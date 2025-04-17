@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 
 interface UrlRepository : CrudRepository<Url, Int> {
-    @Query("SELECT id, original_filename, url_path, content_type, account_id FROM URL u WHERE u.url_path = :url")
+    @Query("SELECT * FROM URL u WHERE u.url_path = :url")
     fun findByGeneratedUrl(@Param("url") generatedUrl: String): Url?
 }
