@@ -15,7 +15,7 @@ class UrlController(private val service: UrlService, private val s3: S3ClientDat
         println("Look at /$generatedUrl")
         service.findByUrl("/$generatedUrl")?.let { url ->
             println("Url find: $url")
-            val rawData = s3.readData(url.urlPath)
+            val rawData = s3.readData(url)
             return rawData
         }
         return ResponseEntity.notFound().build()

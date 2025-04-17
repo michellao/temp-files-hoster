@@ -1,5 +1,6 @@
 package com.example.shorturl.datasource
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -11,18 +12,21 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse
 import java.io.InputStream
 
 @Component
-class S3ClientData(private val s3Client: S3Client) {
-    val bucketName = "shorturl"
-
-    fun readData(k: String): ResponseEntity<ByteArray> {
+class S3ClientData(
+    @Value("\${spring.application.name}")
+    private val bucketName: String,
+    private val s3Client: S3Client)
+{
+    fun readData(url: Url): ResponseEntity<ByteArray> {
         val response = s3Client.getObject { request ->
-            request.bucket(this.bucketName).key(k)
+            request.bucket(this.bucketName).key(url.urlPath)
         }
         val objectMetadata = response.response()
         val contentType = MediaType.valueOf(objectMetadata.contentType() ?: MediaType.APPLICATION_OCTET_STREAM_VALUE)
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$k")
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${url.originalFilename}")
             .contentType(contentType)
+            .contentLength(objectMetadata.contentLength())
             .body(response.readAllBytes())
     }
 
