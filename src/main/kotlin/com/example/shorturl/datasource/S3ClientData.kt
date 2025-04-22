@@ -37,10 +37,9 @@ class S3ClientData(
         return response
     }
 
-    fun deleteData(k: String): Boolean {
-        val response = s3Client.deleteObject { request ->
-            request.bucket(bucketName).key(k).build()
+    fun deleteData(k: String) {
+        s3Client.deleteObject { request ->
+            request.bucket(bucketName).key(k)
         }
-        return response.deleteMarker()
     }
 }
