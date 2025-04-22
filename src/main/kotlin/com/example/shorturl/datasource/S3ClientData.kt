@@ -19,7 +19,7 @@ class S3ClientData(
 {
     fun readData(url: Url): ResponseEntity<ByteArray> {
         val response = s3Client.getObject { request ->
-            request.bucket(this.bucketName).key(url.urlPath)
+            request.bucket(bucketName).key(url.urlPath)
         }
         val objectMetadata = response.response()
         val contentType = MediaType.valueOf(objectMetadata.contentType() ?: MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -31,9 +31,16 @@ class S3ClientData(
     }
 
     fun writeData(k: String, inputStream: InputStream, contentType: String): PutObjectResponse? {
-        val putObjectRequest = PutObjectRequest.builder().bucket(this.bucketName).key(k).contentType(contentType).build()
+        val putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(k).contentType(contentType).build()
         val requestBody = RequestBody.fromBytes(inputStream.readBytes())
         val response = s3Client.putObject(putObjectRequest, requestBody)
         return response
+    }
+
+    fun deleteData(k: String): Boolean {
+        val response = s3Client.deleteObject { request ->
+            request.bucket(bucketName).key(k).build()
+        }
+        return response.deleteMarker()
     }
 }
