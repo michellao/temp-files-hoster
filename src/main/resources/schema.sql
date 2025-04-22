@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS url (
     url_path VARCHAR(32),
     content_type ENUM('application/json', 'text/plain', 'application/pdf', 'application/octet-stream') NOT NULL,
     size_mebi_bytes INTEGER NOT NULL,
-    expires_at DATE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
     account_id INTEGER,
     FOREIGN KEY (account_id) REFERENCES account (id)
 );
