@@ -37,7 +37,7 @@ data class Url(
             val minAge = 30
             val maxAge = 365
             val maxSize = 512
-            val days = minAge + (minAge + maxAge) * (sizeMebiBytes / maxSize - 1).toDouble().pow(3)
+            val days = minAge + (minAge - maxAge) * (sizeMebiBytes / maxSize - 1).toDouble().pow(3)
             val daysInMillisecond = (days * 24 * 60 * 60 * 1000).toLong()
             return Date(now + daysInMillisecond)
         }
