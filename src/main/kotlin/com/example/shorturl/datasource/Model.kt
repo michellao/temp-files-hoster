@@ -3,8 +3,6 @@ package com.example.shorturl.datasource
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.annotation.Id
 import org.springframework.data.mapping.MappingException
-import org.springframework.data.relational.core.mapping.MappedCollection
-import org.springframework.util.unit.DataSize
 import java.util.Date
 import kotlin.math.pow
 
@@ -12,6 +10,7 @@ import kotlin.math.pow
 data class Account(
     val apiKey: String,
     val isAdmin: Boolean = false,
+    val urls: Map<Int, Url>,
     @Id var id: Int? = null
 )
 
@@ -21,8 +20,6 @@ data class Url(
     val urlPath: String,
     val contentType: String,
     val sizeMebiBytes: Long,
-    @MappedCollection(idColumn = "accountId", keyColumn = "id")
-    val account: Account? = null,
     val expiresAt: Date = calculateExpiresAt(sizeMebiBytes),
     @Id var id: Int? = null
 ) {
