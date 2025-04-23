@@ -32,7 +32,6 @@ class FileUploadController(private val service: UrlService, private val s3: S3Cl
                 contentType,
                 sizeMebibytes,
             )
-            println("Url: $url")
             service.save(url)
             s3.writeData(generatedUrl, file.inputStream, contentType)
             return "/$generatedUrl"

@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 class UrlController(private val service: UrlService, private val s3: S3ClientData) {
     @GetMapping("/{generatedUrl}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun getFile(@PathVariable("generatedUrl") generatedUrl: String): ResponseEntity<ByteArray> {
-        println("Look at /$generatedUrl")
         service.findByUrl("/$generatedUrl")?.let { url ->
-            println("Url find: $url")
             val rawData = s3.readData(url)
             return rawData
         }
