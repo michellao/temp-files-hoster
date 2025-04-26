@@ -20,6 +20,8 @@ data class Url(
     val urlPath: String,
     val contentType: String,
     val sizeMebiBytes: Long,
+    val IpAddress: String,
+    val userAgent: String?,
     val expiresAt: Date = calculateExpiresAt(sizeMebiBytes),
     @Id var id: Int? = null
 ) {

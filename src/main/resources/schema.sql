@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS url (
     content_type ENUM('application/json', 'text/plain', 'application/pdf', 'application/octet-stream') NOT NULL,
     size_mebi_bytes INTEGER NOT NULL,
     expires_at TIMESTAMP NOT NULL,
+    ip_address VARCHAR_IGNORECASE(40) NOT NULL,
+    user_agent VARCHAR_IGNORECASE(128) DEFAULT NULL,
     account_id INTEGER,
     FOREIGN KEY (account_id) REFERENCES account (id)
 );
