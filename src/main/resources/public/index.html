@@ -2,15 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Just a another temporary file hoster</h1>
-    <p>This project is <a href="https://github.com/michellao/temp-files-hoster">open source</a>.</p>
-    <details>
-        <summary>Upload file</summary>
+    <p>This project is <a href="https://github.com/michellao/temp-files-hoster">open source</a> and inspire from <a href="https://0x0.st">0x0.st</a>.</p>
+    <details open>
+        <summary>Uploading files</summary>
+        <p>Send HTTP POST request to / with data encoded as multipart/form-data</p>
         <form action="/" method="POST" enctype="multipart/form-data">
             <input type="file" name="file">
         </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>fields</th>
+                    <th>content</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>file</th>
+                    <td>data</td>
+                </tr>
+                <tr>
+                    <th>expire</th>
+                    <td>(in future update)</td>
+                </tr>
+            </tbody>
+        </table>
     </details>
+    <script>
+        const form = document.querySelector("form");
+        form.addEventListener("change", () => {
+            form.submit();
+        });
+    </script>
 </body>
 </html>
