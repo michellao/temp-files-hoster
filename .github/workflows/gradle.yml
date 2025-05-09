@@ -20,5 +20,13 @@ jobs:
           distribution: liberica
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+      - name: Setup MinIO for testing
+        run: docker run -p 9000:9000 \
+             -p 9001:9001 \
+             --user $(id -u):$(id -g) \
+             --name minio1 \
+             -e "MINIO_ROOT_USER=${{ secrets.MINIO_USER }}" \
+             -e "MINIO_ROOT_PASSWORD=${{ secrets.MINIO_PASSWORD }}" \
+             quay.io/minio/minio server /data --console-address ":9001"
       - name: Build with Gradle Wrapper
         run: ./gradlew build
