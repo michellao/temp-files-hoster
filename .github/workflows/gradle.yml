@@ -22,11 +22,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle Wrapper
         run: ./gradlew build
-      - run: pwd
-      - run: ls
       - name: Save artifact
         uses: actions/upload-artifact@v4
         with:
           name: 'artifact'
-          path: ./build/libs/shorturl-*!(-plain).jar
+          path: |
+            ./build/libs/shorturl-*.jar
+            !./build/libs/shorturl-*-plain.jar
           compression-level: 0
