@@ -4,13 +4,15 @@ on:
     branches: [ docker-ci ]
   pull_request:
     branches: [ $default-branch ]
-
+env:
+  IMAGE_NAME: temp-file-hoster
+  REGISTRY: ghcr.io
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -30,3 +32,19 @@ jobs:
             ./build/libs/shorturl-*.jar
             !./build/libs/shorturl-*-plain.jar
           compression-level: 0
+      - name: Build image
+        run: docker build -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME"
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z] '[a-z]')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [[ "$VERSION" == "main" ]] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
