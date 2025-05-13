@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/**'
 env:
   IMAGE_NAME: temp-file-hoster
   REGISTRY: ghcr.io

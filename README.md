@@ -13,3 +13,13 @@ cp .env.example .env
 ```
 
 Launch an IDE like Intellij IDEA, it automatically detects the project and setup it.
+
+## On production
+
+### Using an image Docker
+
+You need to configure an .env
+
+```sh
+docker run --env-file .env ghcr.io/michellao/file-temp-hoster
+```
