@@ -1,9 +1,8 @@
 name: Build and store artifact
 on:
   push:
-    branches: [ $default_branch ]
-  pull_request:
-    branches: [ $default-branch ]
+    branches:
+      - main
 env:
   IMAGE_NAME: temp-file-hoster
   REGISTRY: ghcr.io
