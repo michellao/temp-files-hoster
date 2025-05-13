@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'src/**'
+      - '*.kts'
 env:
   IMAGE_NAME: temp-file-hoster
   REGISTRY: ghcr.io
