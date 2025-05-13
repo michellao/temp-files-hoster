@@ -1,7 +1,7 @@
 name: Build and store artifact
 on:
   push:
-    branches: [ docker-ci ]
+    branches: [ $default_branch ]
   pull_request:
     branches: [ $default-branch ]
 env:
