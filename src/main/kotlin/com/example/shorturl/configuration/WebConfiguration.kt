@@ -1,6 +1,7 @@
 package com.example.shorturl.configuration
 
 import org.springframework.context.annotation.Configuration
+import org.springframework.format.FormatterRegistry
 import org.springframework.http.CacheControl
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
@@ -12,6 +13,10 @@ class WebConfiguration : WebMvcConfigurer {
         registry.addResourceHandler("/resources/**")
             .addResourceLocations("classpath:/public/")
             .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+    }
+
+    override fun addFormatters(registry: FormatterRegistry) {
+        registry.addConverter(DateConverter())
     }
 }
 
