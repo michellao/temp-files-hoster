@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/**'
       - '*.kts'
+      - Dockerfile
 env:
   IMAGE_NAME: temp-file-hoster
   REGISTRY: ghcr.io
