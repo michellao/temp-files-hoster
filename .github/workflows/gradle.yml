@@ -7,8 +7,9 @@ on:
       - 'src/**'
       - '*.kts'
       - Dockerfile
+      - .github/**
 env:
-  IMAGE_NAME: temp-file-hoster
+  IMAGE_NAME: temp-files-hoster
   REGISTRY: ghcr.io
 jobs:
   build-and-upload:
