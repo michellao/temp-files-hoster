@@ -5,6 +5,8 @@ body {
 table {
     border-collapse: collapse;
     border: 2px solid;
+    width: 420px;
+    overflow: auto;
 }
 
 th, td {
