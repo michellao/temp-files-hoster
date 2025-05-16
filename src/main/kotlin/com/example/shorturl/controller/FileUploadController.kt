@@ -1,6 +1,7 @@
 package com.example.shorturl.controller
 
 import com.example.shorturl.UrlHandler
+import com.example.shorturl.configuration.MyAppProperties
 import com.example.shorturl.datasource.S3ClientData
 import com.example.shorturl.datasource.Url
 import com.example.shorturl.datasource.service.UrlService
@@ -16,7 +17,11 @@ import java.util.Date
 import kotlin.math.pow
 
 @Controller
-class FileUploadController(private val service: UrlService, private val s3: S3ClientData) {
+class FileUploadController(
+    private val service: UrlService,
+    private val s3: S3ClientData,
+    private val appProperties: MyAppProperties
+) {
     @PostMapping("/", produces = [MediaType.TEXT_PLAIN_VALUE])
     @ResponseBody
     fun postFile(
@@ -49,7 +54,7 @@ class FileUploadController(private val service: UrlService, private val s3: S3Cl
             )
             service.save(url)
             s3.writeData(generatedUrl, file.inputStream, contentType)
-            return "/$generatedUrl"
+            return "${appProperties.baseUrl ?: ""}/$generatedUrl"
         }
         return "error uploaded"
     }
