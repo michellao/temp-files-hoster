@@ -16,6 +16,9 @@ class UrlController(private val service: UrlService, private val s3: S3ClientDat
     @GetMapping("/style.css")
     fun style() = "forward:/resources/style.css"
 
+    @GetMapping("/robots.txt")
+    fun robots() = "forward:/robots.txt"
+
     @GetMapping("/{generatedUrl}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun getFile(@PathVariable("generatedUrl") generatedUrl: String): ResponseEntity<ByteArray> {
         println("Generated url: $generatedUrl")
