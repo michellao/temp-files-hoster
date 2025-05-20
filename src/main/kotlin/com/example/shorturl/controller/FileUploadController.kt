@@ -8,12 +8,14 @@ import com.example.shorturl.datasource.service.UrlService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.multipart.MultipartFile
 import java.util.Date
+import java.util.logging.Logger
 import kotlin.math.pow
 
 @Controller
@@ -22,6 +24,18 @@ class FileUploadController(
     private val s3: S3ClientData,
     private val appProperties: MyAppProperties
 ) {
+    private val logger = Logger.getLogger(this.javaClass.name)
+    fun readRealIp(request: HttpServletRequest): String {
+        var ip: String? = request.getHeader("x-forwarded-for")
+        if (ip == null) {
+            ip = request.getHeader("x-real-ip")
+        }
+        if (ip == null) {
+            ip = request.remoteAddr
+        }
+        return ip
+    }
+
     @PostMapping("/", produces = [MediaType.TEXT_PLAIN_VALUE])
     @ResponseBody
     fun postFile(
@@ -43,12 +57,14 @@ class FileUploadController(
             if (expires != null) {
                 expiresConverted = expires
             }
+            val realIp = readRealIp(request)
+            logger.info("IP: $realIp, Upload filename: $originalFileName")
             val url = Url(
                 originalFileName,
                 "/$generatedUrl",
                 contentType,
                 sizeMebibytes,
-                request.remoteAddr,
+                realIp,
                 userAgent,
                 expiresConverted
             )
