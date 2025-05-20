@@ -6,11 +6,29 @@ You need an instance of AWS S3 or an endpoint S3 like MinIO.
 
 ## How to setup for development
 
-Configure your .env from .env.example
+### Requirements
 
+- MinIO server or AWS S3 instance
+- PostgreSQL Database
+
+You can use `docker-compose-dev.yaml` to start services
+
+Copy from `.env.example` to `.env` and configure it according to your setup
 ```sh
 cp .env.example .env
 ```
+
+You need to fill database username and password in `.env`. It'll create the postgres database with that credentials
+
+```sh
+docker compose -f docker-compose-dev.yaml up -d
+```
+
+Then you need to create MinIO key ID and access key on the web UI.
+
+MinIO default credential for both: minioadmin
+
+Go to http://localhost:9001/access-keys, create key and set it to .env
 
 Launch an IDE like Intellij IDEA, it automatically detects the project and setup it.
 
