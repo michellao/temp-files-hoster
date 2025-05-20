@@ -27,6 +27,8 @@ jobs:
           distribution: liberica
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
       - name: Build with Gradle Wrapper
         run: ./gradlew build
       - name: Save artifact
