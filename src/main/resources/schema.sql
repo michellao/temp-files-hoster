@@ -1,7 +1,3 @@
-#!/usr/bin/env sh
-set -e
-createdb --username $POSTGRES_USER $DATABASE_NAME
-psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER --dbname $DATABASE_NAME << EOF
 DROP INDEX IF EXISTS ix_auth_username;
 DROP TABLE IF EXISTS authorities;
 DROP TABLE IF EXISTS users;
@@ -30,4 +26,3 @@ CREATE TABLE IF NOT EXISTS url (
     account_id INTEGER,
     FOREIGN KEY (account_id) REFERENCES account (id)
 );
-EOF

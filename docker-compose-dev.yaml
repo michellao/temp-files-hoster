@@ -10,8 +10,11 @@ services:
     shm_size: 128mb
     volumes:
       - type: bind
-        source: ./src/main/resources/schema.sh
-        target: /docker-entrypoint-initdb.d/schema.sh
+        source: ./src/main/resources/init-db-pg.sh
+        target: /docker-entrypoint-initdb.d/01-init-db.sh
+      - type: bind
+        source: ./src/main/resources/schema.sql
+        target: /schema.sql
     env_file: .env
     environment:
       POSTGRES_USER: ${DATABASE_USERNAME}
