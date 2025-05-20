@@ -2,6 +2,7 @@ package com.example.shorturl.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
@@ -38,7 +39,11 @@ class SecurityConfig {
             .roles("USER")
             .build()
         val users = JdbcUserDetailsManager(dataSource)
-        users.createUser(user)
+        try {
+            users.createUser(user)
+        } catch (e: DuplicateKeyException) {
+            e.printStackTrace()
+        }
         return users
     }
 
