@@ -12,14 +12,6 @@ import java.util.logging.Logger
 @Controller
 class UrlController(private val service: UrlService, private val s3: S3ClientData) {
     private val logger = Logger.getLogger(this.javaClass.name)
-    @GetMapping("/")
-    fun index() = "forward:/resources/index.html"
-
-    @GetMapping("/style.css")
-    fun style() = "forward:/resources/style.css"
-
-    @GetMapping("/robots.txt")
-    fun robots() = "forward:/resources/robots.txt"
 
     @GetMapping("/{generatedUrl}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun getFile(@PathVariable("generatedUrl") generatedUrl: String): ResponseEntity<ByteArray> {
