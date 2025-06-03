@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.JdbcUserDetailsManager
 import org.springframework.security.provisioning.UserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
+import java.util.logging.Logger
 import javax.sql.DataSource
 
 @Configuration
@@ -42,7 +43,7 @@ class SecurityConfig {
         try {
             users.createUser(user)
         } catch (e: DuplicateKeyException) {
-            e.printStackTrace()
+            Logger.getLogger(MyAppProperties::class.java.name).info("Initialize a default user already exists")
         }
         return users
     }
