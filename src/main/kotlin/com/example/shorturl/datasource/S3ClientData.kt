@@ -1,6 +1,6 @@
 package com.example.shorturl.datasource
 
-import org.springframework.beans.factory.annotation.Value
+import com.example.shorturl.configuration.properties.MyAppProperties
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -13,10 +13,11 @@ import java.io.InputStream
 
 @Component
 class S3ClientData(
-    @Value("\${spring.application.name}")
-    private val bucketName: String,
+    appProperties: MyAppProperties,
     private val s3Client: S3Client)
 {
+    private val bucketName: String = appProperties.bucketName
+
     fun readData(url: Url): ResponseEntity<ByteArray> {
         val response = s3Client.getObject { request ->
             request.bucket(bucketName).key(url.urlPath)
