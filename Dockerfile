@@ -8,7 +8,6 @@ USER app
 COPY ./build/libs/shorturl-0.0.1-SNAPSHOT.jar /app
 
 WORKDIR /app
-RUN mkdir database
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "shorturl-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-Xms512M", "-Xmx1G", "-jar", "shorturl-0.0.1-SNAPSHOT.jar"]
