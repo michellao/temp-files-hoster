@@ -1,4 +1,4 @@
-package com.example.shorturl.configuration
+package com.example.shorturl.controller
 
 import org.springframework.core.convert.converter.Converter
 import java.util.Calendar

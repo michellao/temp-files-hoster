@@ -1,5 +1,6 @@
 package com.example.shorturl.configuration
 
+import com.example.shorturl.configuration.properties.MyAppProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.dao.DuplicateKeyException

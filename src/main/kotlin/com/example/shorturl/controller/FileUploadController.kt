@@ -1,7 +1,7 @@
 package com.example.shorturl.controller
 
 import com.example.shorturl.UrlHandler
-import com.example.shorturl.configuration.MyAppProperties
+import com.example.shorturl.configuration.properties.MyAppProperties
 import com.example.shorturl.datasource.MimeType
 import com.example.shorturl.datasource.S3ClientData
 import com.example.shorturl.datasource.Url
