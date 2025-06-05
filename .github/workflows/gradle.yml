@@ -11,6 +11,7 @@ on:
       - .github/**
 env:
   IMAGE_NAME: temp-files-hoster
+  PRIVATE_IMAGE_NAME: my-files-hoster
   REGISTRY: ghcr.io
 jobs:
   build-and-upload:
@@ -40,18 +41,28 @@ jobs:
             !./build/libs/shorturl-*-plain.jar
           compression-level: 0
       - name: Build image
-        run: docker build -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+        run: |
+          docker build -t $PRIVATE_IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" --label "org.opencontainers.image.visibility=private" . &
+          docker build -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+          wait
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
 
       - name: Push image
         run: |
           IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME"
+          PRIVATE_IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$PRIVATE_IMAGE_NAME"
+          
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          PRIVATE_IMAGE_ID=$(echo $PRIVATE_IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
           [[ "$VERSION" == "main" ]] && VERSION=latest
+          
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
+          docker tag $PRIVATE_IMAGE_NAME $PRIVATE_IMAGE_ID:$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $PRIVATE_IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
