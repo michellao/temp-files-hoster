@@ -18,7 +18,7 @@ data class Account(
 data class Url(
     val originalFilename: String?,
     val urlPath: String,
-    val contentType: String,
+    val contentType: MimeType,
     val sizeMebiBytes: Long,
     val ipAddress: String,
     val userAgent: String?,

@@ -2,13 +2,13 @@ package com.example.shorturl.controller
 
 import com.example.shorturl.UrlHandler
 import com.example.shorturl.configuration.MyAppProperties
+import com.example.shorturl.datasource.MimeType
 import com.example.shorturl.datasource.S3ClientData
 import com.example.shorturl.datasource.Url
 import com.example.shorturl.datasource.service.UrlService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
@@ -62,7 +62,7 @@ class FileUploadController(
             val url = Url(
                 originalFileName,
                 "/$generatedUrl",
-                contentType,
+                MimeType.fromValue(contentType),
                 sizeMebibytes,
                 realIp,
                 userAgent,
