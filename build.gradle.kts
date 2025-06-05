@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    val springCloudAwsVersion = "3.3.0"
+    val springCloudAwsVersion = "3.3.1"
     implementation(platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}"))
     implementation("io.awspring.cloud:spring-cloud-aws-starter-s3")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
