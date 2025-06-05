@@ -1,7 +1,7 @@
-LABEL org.opencontainers.image.source=https://github.com/michellao/temp-files-hoster
-LABEL org.opencontainers.image.licenses=MIT
-
 FROM bellsoft/liberica-openjre-alpine:21
+
+LABEL org.opencontainers.image.source="https://github.com/michellao/temp-files-hoster"
+LABEL org.opencontainers.image.licenses="MIT"
 
 RUN adduser -Dh /app app
 USER app
