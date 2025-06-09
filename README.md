@@ -18,7 +18,7 @@ Copy from `.env.example` to `.env` and configure it according to your setup
 cp .env.example .env
 ```
 
-You need to fill database username and password in `.env`. It'll create the postgres database with that credentials
+You need to enter the database username and password in the `.env`. This will create the PostgreSQL database using those credentials
 
 ```sh
 docker compose -f docker-compose-dev.yaml up -d
