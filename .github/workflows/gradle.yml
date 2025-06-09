@@ -30,12 +30,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
+      - name: Set environment variables
+        run: |
+          echo "AWS_ACCESS_KEY_ID=minioadmin" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=minioadmin" >> $GITHUB_ENV
+          echo "AWS_ENDPOINT=http://localhost:9000" >> $GITHUB_ENV
+          echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
       - name: Setup local S3
         run: |
-          echo AWS_ACCESS_KEY_ID=minioadmin >> $GITHUB_ENV
-          echo AWS_SECRET_ACCESS_KEY=minioadmin >> $GITHUB_ENV
-          echo AWS_ENDPOINT=http://localhost:9000 >> $GITHUB_ENV
-          echo AWS_REGION=eu-west-1 >> $GITHUB_ENV
           docker run --name minio1 --rm -p 9000:9000 -p 9001:9001 -d minio/minio server /data --console-address ":9001"
           sleep 3
           docker exec minio1 mc alias s local http://localhost:9000 $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
