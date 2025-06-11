@@ -7,7 +7,9 @@ import com.example.shorturl.datasource.S3ClientData
 import com.example.shorturl.datasource.Url
 import com.example.shorturl.datasource.service.UrlService
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.data.mapping.MappingException
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
@@ -22,7 +24,9 @@ import kotlin.math.pow
 class FileUploadController(
     private val service: UrlService,
     private val s3: S3ClientData,
-    private val appProperties: MyAppProperties
+    private val appProperties: MyAppProperties,
+    private val expirationCalculator: ExpirationCalculator,
+    calculator: ExpirationCalculator,
 ) {
     private val logger = Logger.getLogger(this.javaClass.name)
     fun readRealIp(request: HttpServletRequest): String {
@@ -43,7 +47,7 @@ class FileUploadController(
         request: HttpServletRequest,
         @RequestParam("file") file: MultipartFile,
         @RequestParam("expires") expires: Date? = null
-    ): String {
+    ): ResponseEntity<String> {
         if (!file.isEmpty) {
             val contentType = file.contentType ?: MediaType.APPLICATION_OCTET_STREAM.toString()
             val originalFileName = file.originalFilename
@@ -53,9 +57,16 @@ class FileUploadController(
                 generatedUrl = UrlHandler.generatorURL(14)
                 val findUrl = service.findByUrl("/$generatedUrl")
             } while (findUrl != null)
-            var expiresConverted = Url.calculateExpiresAt(sizeMebibytes)
+            var expiresConverted = expirationCalculator.calculateExpiresAt(sizeMebibytes)
             if (expires != null) {
-                expiresConverted = expires
+                val now = System.currentTimeMillis()
+                val maxOffset = (appProperties.expiration.maxDays * 24 * 60 * 60 * 1000L)
+                val dateMaxOffset = Date(now + maxOffset)
+                if (expires.before(dateMaxOffset)) {
+                    expiresConverted = expires
+                } else {
+                    return ResponseEntity.badRequest().body("The expiry date has exceeded the maximum age")
+                }
             }
             val realIp = readRealIp(request)
             logger.info("IP: $realIp, Upload filename: $originalFileName")
@@ -70,8 +81,8 @@ class FileUploadController(
             )
             service.save(url)
             s3.writeData(generatedUrl, file.inputStream, contentType)
-            return "${appProperties.baseUrl ?: ""}/$generatedUrl"
+            return ResponseEntity.ok("${appProperties.baseUrl ?: ""}/$generatedUrl")
         }
-        return "error uploaded"
+        return ResponseEntity.badRequest().body("error uploaded")
     }
 }
