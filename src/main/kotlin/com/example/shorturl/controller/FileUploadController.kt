@@ -7,7 +7,6 @@ import com.example.shorturl.datasource.S3ClientData
 import com.example.shorturl.datasource.Url
 import com.example.shorturl.datasource.service.UrlService
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.data.mapping.MappingException
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
