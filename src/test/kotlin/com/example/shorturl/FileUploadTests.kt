@@ -40,4 +40,21 @@ class FileUploadTests(@Autowired private val myApp: MyAppProperties) {
                 content().string(StringStartsWith(myApp.bucketName))
             }
     }
+
+    @Test
+    fun testUploadExceedMaxAge(@Autowired mockMvc: MockMvc) {
+        val file = MockMultipartFile(
+            "file",
+            "fileTest.txt",
+            "text/plain",
+            "Hello world".toByteArray()
+        )
+        mockMvc.perform {
+            multipart("/")
+                .file(file)
+                .param("expires", "${(myApp.expiration.maxDays + 1) * 24 * 60 * 60}s")
+                .buildRequest(servletContext)
+        }
+            .andExpect(status().is4xxClientError)
+    }
 }
