@@ -26,7 +26,6 @@ class FileUploadController(
     private val s3: S3ClientData,
     private val appProperties: MyAppProperties,
     private val expirationCalculator: ExpirationCalculator,
-    calculator: ExpirationCalculator,
 ) {
     private val logger = Logger.getLogger(this.javaClass.name)
     fun readRealIp(request: HttpServletRequest): String {
