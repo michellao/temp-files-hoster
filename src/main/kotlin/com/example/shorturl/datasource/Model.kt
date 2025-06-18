@@ -19,6 +19,7 @@ data class Url(
     val urlPath: String,
     val contentType: MimeType,
     val sizeMebiBytes: Long,
+    val token: String,
     val ipAddress: String,
     val userAgent: String?,
     val expiresAt: Date,

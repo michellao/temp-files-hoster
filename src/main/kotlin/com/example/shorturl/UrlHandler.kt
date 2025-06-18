@@ -6,7 +6,15 @@ class UrlHandler(private val url: String) {
 
         fun generatorURL(nbChar: Int): String {
             var strings = ""
-            for (i in 0..nbChar) {
+            for (i in 0..nbChar - 1) {
+                strings += CHARACTERS.random()
+            }
+            return strings
+        }
+
+        fun generatorToken(): String {
+            var strings = ""
+            for (i in 0..31) {
                 strings += CHARACTERS.random()
             }
             return strings

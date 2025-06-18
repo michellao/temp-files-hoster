@@ -46,7 +46,7 @@ class FileUploadController(
         request: HttpServletRequest,
         @RequestParam("file") file: MultipartFile,
         @RequestParam("expires") expires: Date? = null
-    ): ResponseEntity<String> {
+    ): Any {
         if (!file.isEmpty) {
             val contentType = file.contentType ?: MediaType.APPLICATION_OCTET_STREAM.toString()
             val originalFileName = file.originalFilename
@@ -68,19 +68,26 @@ class FileUploadController(
                 }
             }
             val realIp = readRealIp(request)
+            val token = UrlHandler.generatorToken()
             logger.info("IP: $realIp, Upload filename: $originalFileName")
             val url = Url(
                 originalFileName,
                 "/$generatedUrl",
                 MimeType.fromValue(contentType),
                 sizeMebibytes,
+                token,
                 realIp,
                 userAgent,
                 expiresConverted
             )
             service.save(url)
             s3.writeData(generatedUrl, file.inputStream, contentType)
-            return ResponseEntity.ok("${appProperties.baseUrl ?: ""}/$generatedUrl")
+            return ResponseEntity
+                .ok()
+                .headers {
+                    it.set("X-Token", token)
+                }
+                .body("${appProperties.baseUrl ?: ""}/$generatedUrl")
         }
         return ResponseEntity.badRequest().body("error uploaded")
     }

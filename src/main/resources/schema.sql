@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS url (
     content_type mime NOT NULL,
     size_mebi_bytes INTEGER NOT NULL,
     expires_at TIMESTAMP NOT NULL,
+    token VARCHAR(32) NOT NULL,
     ip_address VARCHAR(40) NOT NULL,
     user_agent VARCHAR(128) DEFAULT NULL,
     account_id INTEGER,
