@@ -1,4 +1,4 @@
-package com.example.shorturl.controller
+package com.example.shorturl.tools
 
 import com.example.shorturl.configuration.properties.MyAppProperties
 import org.springframework.stereotype.Component

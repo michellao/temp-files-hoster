@@ -1,6 +1,6 @@
 package com.example.shorturl.configuration
 
-import com.example.shorturl.controller.DateConverter
+import com.example.shorturl.tools.DateConverter
 import org.springframework.context.annotation.Configuration
 import org.springframework.format.FormatterRegistry
 import org.springframework.http.CacheControl
