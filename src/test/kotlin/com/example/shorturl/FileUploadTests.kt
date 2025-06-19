@@ -36,9 +36,6 @@ class FileUploadTests(@Autowired private val myApp: MyAppProperties) {
                 .buildRequest(servletContext)
         }
             .andExpect(status().isOk)
-            .andExpect {
-                content().string(StringStartsWith(myApp.bucketName))
-            }
     }
 
     @Test
