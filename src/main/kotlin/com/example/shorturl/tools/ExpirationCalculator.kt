@@ -15,4 +15,11 @@ class ExpirationCalculator(private val appProperties: MyAppProperties) {
         val daysInMillisecond = (days * 24 * 60 * 60 * 1000).toLong()
         return Date(now + daysInMillisecond)
     }
+
+    fun testExpireUnderLimit(expires: Date): Boolean {
+        val now = System.currentTimeMillis()
+        val maxOffset = (appProperties.expiration.maxDays * 24 * 60 * 60 * 1000L)
+        val dateMaxOffset = Date(now + maxOffset)
+        return expires.before(dateMaxOffset)
+    }
 }

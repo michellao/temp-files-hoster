@@ -22,7 +22,7 @@ data class Url(
     val token: String,
     val ipAddress: String,
     val userAgent: String?,
-    val expiresAt: Date,
+    var expiresAt: Date,
     @Id var id: Int? = null
 ) {
     init {

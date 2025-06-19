@@ -58,10 +58,7 @@ class FileUploadController(
             } while (findUrl != null)
             var expiresConverted = expirationCalculator.calculateExpiresAt(sizeMebibytes)
             if (expires != null) {
-                val now = System.currentTimeMillis()
-                val maxOffset = (appProperties.expiration.maxDays * 24 * 60 * 60 * 1000L)
-                val dateMaxOffset = Date(now + maxOffset)
-                if (expires.before(dateMaxOffset)) {
+                if (expirationCalculator.testExpireUnderLimit(expires)) {
                     expiresConverted = expires
                 } else {
                     return ResponseEntity.badRequest().body("The expiry date has exceeded the maximum age")
