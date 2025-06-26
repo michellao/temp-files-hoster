@@ -1,0 +1,21 @@
+:root, .light, .light-theme, .radix-themes {
+  --color-background: #f9f9fb;
+}
+.dark, .dark-theme, :is(.dark, .dark-theme) :where(.radix-themes:not(.light, .light-theme)) {
+  --color-background: #111111;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+main > div:not(:last-child) {
+    margin-bottom: 24px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
