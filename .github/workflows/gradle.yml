@@ -42,7 +42,7 @@ jobs:
           name: frontend-nextjs
           path: |
             ./frontend/out/
-  build-and-upload:
+  build-backend:
     needs: build-frontend
     runs-on: ubuntu-latest
     permissions:
