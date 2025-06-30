@@ -43,7 +43,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - run: pnpm install
       - name: Build frontend
-        run: pnpm build
+        run: NEXT_TELEMETRY_DISABLED=1 pnpm build
       - name: Upload frontend output
         uses: actions/upload-artifact@v4
         with:
