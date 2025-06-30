@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
@@ -40,6 +41,7 @@ class FileUploadController(
     }
 
     @PostMapping("/", produces = [MediaType.TEXT_PLAIN_VALUE])
+    @CrossOrigin(exposedHeaders = ["X-Token"])
     @ResponseBody
     fun postFile(
         @RequestHeader("User-Agent") userAgent: String?,
