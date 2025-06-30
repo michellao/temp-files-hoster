@@ -4,17 +4,44 @@ on:
     branches:
       - main
       - dev
+      - frontend
     paths:
       - 'src/**'
       - '*.kts'
       - Dockerfile
       - .github/**
+      - 'frontend/**'
 env:
   IMAGE_NAME: temp-files-hoster
   PRIVATE_IMAGE_NAME: my-files-hoster
   REGISTRY: ghcr.io
 jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Setup cache for building frontend
+        uses: actions/setup-node@v4
+        with:
+          node_version: 22
+          cache: 'pnpm'
+      - run: pnpm install
+      - name: Build frontend
+        run: pnpm build
+      - name: Upload frontend output
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-nextjs
+          path: |
+            ./frontend/out/
   build-and-upload:
+    needs: build-frontend
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -36,6 +63,10 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=minioadmin" >> $GITHUB_ENV
           echo "AWS_ENDPOINT=http://localhost:9000" >> $GITHUB_ENV
           echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
+      - name: Download frontend
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-nextjs
       - name: Setup local S3
         run: |
           docker run --name minio1 --rm -p 9000:9000 -p 9001:9001 -d minio/minio server /data --console-address ":9001"
@@ -64,14 +95,14 @@ jobs:
         run: |
           IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME"
           PRIVATE_IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$PRIVATE_IMAGE_NAME"
-          
+
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           PRIVATE_IMAGE_ID=$(echo $PRIVATE_IMAGE_ID | tr '[A-Z]' '[a-z]')
-          
+
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
           [[ "$VERSION" == "main" ]] && VERSION=latest
-          
+
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $PRIVATE_IMAGE_NAME $PRIVATE_IMAGE_ID:$VERSION
