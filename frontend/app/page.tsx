@@ -4,7 +4,7 @@ import UploadFiles from "@/components/upload-files";
 import ManageFiles from "@/components/manage-files";
 import { Flex, Heading, Text } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
-import { getSize } from "@/storage/tools";
+import { getSize } from "@/storage/localstorage";
 
 export default function Page() {
   const [fileCount, setFileCount] = useState(0);
