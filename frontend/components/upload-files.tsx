@@ -6,7 +6,7 @@ import { Flex, Text } from "@radix-ui/themes";
 import TextSubtle from "./text-subtle";
 import styles from "./section-style.module.css";
 import React from "react";
-import { addUploaded } from "@/storage/tools";
+import { addUploaded } from "@/storage/localstorage";
 
 export default function UploadFiles({
   onFileUploaded
