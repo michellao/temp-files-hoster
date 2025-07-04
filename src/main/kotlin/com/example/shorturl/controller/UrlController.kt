@@ -34,7 +34,7 @@ class UrlController(
     }
 
     @PostMapping("/{generatedUrl}")
-    fun deleteFile(
+    fun manageFile(
         @PathVariable("generatedUrl") generatedUrl: String,
         @RequestParam("token") token: String,
         @RequestParam("delete") delete: String? = null,
