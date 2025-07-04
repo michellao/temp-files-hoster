@@ -1,21 +1,8 @@
-'use client';
 import Link from "next/link";
-import UploadFiles from "@/components/upload-files";
-import ManageFiles from "@/components/manage-files";
 import { Flex, Heading, Text } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
-import { getSize } from "@/storage/localstorage";
+import ContainerApp from "./container-app";
 
 export default function Page() {
-  const [fileCount, setFileCount] = useState(0);
-  useEffect(() => {
-    setFileCount(getSize());
-  }, []);
-
-  const handleFileUploaded = () => {
-    setFileCount(getSize());
-  };
-
   return (
     <>
       <Flex direction="column" align="center" mb="5">
@@ -35,8 +22,7 @@ export default function Page() {
         </Text>
       </Flex>
       <main>
-        <UploadFiles onFileUploaded={handleFileUploaded}/>
-        <ManageFiles counter={fileCount}/>
+        <ContainerApp/>
       </main>
     </>
   );

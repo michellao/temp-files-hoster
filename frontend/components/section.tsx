@@ -24,7 +24,7 @@ export default function Section({
       <Flex className={styles.margin}>
         <Flex direction="column" width="100%" height={height}>
           <Flex direction="column">
-            <Heading as="h2"> {Icon && <Icon width="20px" height="20px"/>} { heading }</Heading>
+            <Heading as="h2">{Icon && <Icon width="20px" height="20px"/>} { heading }</Heading>
             <TextSubtle>{ subHeading }</TextSubtle>
           </Flex>
           { children }

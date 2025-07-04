@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import * as z from "zod/v4-mini";
 
 const UploadedData = z.object({
@@ -8,32 +9,53 @@ const UploadedData = z.object({
 
 const UploadedDataArray = z.array(UploadedData);
 
+const keyStorage = 'uploaded-data';
+
 type UploadedData = z.infer<typeof UploadedData>;
 
-const addUploaded = (fileName: string, xToken: string, url: string) => {
-  const json: UploadedData = {
-    fileName,
-    token: xToken,
-    url
-  };
-  try {
-    const existData = localStorage.getItem('uploaded-data');
-    if (existData) {
-      let rawJson = JSON.parse(existData);
-      let parseJson = UploadedDataArray.parse(rawJson);
-      parseJson.push(json);
-      localStorage.setItem('uploaded-data', JSON.stringify(parseJson));
-    } else {
-      localStorage.setItem('uploaded-data', JSON.stringify([json]));
-    }
-  } catch {
-    localStorage.setItem("uploaded-data", JSON.stringify([json]));
+function useUploadedData() {
+  const [fileCounter, setFileCounter] = useState(getSize);
+  const [files, setFiles] = useState<UploadedData[]>(getAllUploaded);
+
+  function saveOverrideToLocalStorage(backup: UploadedData[]) {
+    localStorage.setItem(keyStorage, JSON.stringify(backup));
   }
-};
+
+  useEffect(() => {
+    console.log('save to local storage');
+    saveOverrideToLocalStorage(files);
+  }, [files, fileCounter]);
+
+  function addFile(fileName: string, xToken: string, url: string) {
+    setFileCounter(c => c + 1);
+    const data: UploadedData = {
+      fileName,
+      token: xToken,
+      url
+    };
+    setFiles(f => [...f, data]);
+  }
+
+  function deleteFile(url: string) {
+    setFileCounter(c => c - 1);
+    setFiles(f =>
+      f.filter(file => file.url !== url)
+    );
+  }
+
+  const props = {
+    counter: fileCounter,
+    files,
+    addFile,
+    deleteFile,
+  };
+
+  return props;
+}
 
 function getAllUploaded() {
   try {
-    const data = localStorage.getItem('uploaded-data');
+    const data = localStorage.getItem(keyStorage);
     if (data) {
       const rawJson = JSON.parse(data);
       const parseJson = UploadedDataArray.parse(rawJson);
@@ -46,28 +68,8 @@ function getAllUploaded() {
   }
 }
 
-function getUploaded(url: string): UploadedData | null {
-  try {
-    const data = localStorage.getItem('uploaded-data');
-    if (data) {
-      const rawJson = JSON.parse(data);
-      const parseJson = UploadedDataArray.parse(rawJson);
-      const findedUrl = parseJson.find(u => u.url === url);
-      if (findedUrl) {
-        return findedUrl;
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  } catch {
-    return null;
-  }
-};
-
 function getSize(): number {
-  const data = localStorage.getItem('uploaded-data');
+  const data = localStorage.getItem(keyStorage);
   try {
     if (data) {
       const rawJson = JSON.parse(data);
@@ -79,12 +81,12 @@ function getSize(): number {
   } catch {
     return 0;
   }
-  return 0;
 }
 
 export {
-  addUploaded,
-  getAllUploaded,
-  getUploaded,
-  getSize
+  useUploadedData,
+};
+
+export type {
+  UploadedData,
 };

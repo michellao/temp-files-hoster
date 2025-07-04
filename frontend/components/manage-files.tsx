@@ -2,10 +2,18 @@ import { FileIcon } from "@radix-ui/react-icons";
 import Section from "./section";
 import { Flex, Text } from "@radix-ui/themes";
 import TextSubtle from "./text-subtle";
-import { getAllUploaded } from "@/storage/localstorage";
+import { UploadedData } from "@/storage/localstorage";
 import DisplayFile from "./display-file";
 
-export default function ManageFiles({ counter }: { counter: number }) {
+export default function ManageFiles({
+  counter,
+  files,
+  deleteFile,
+}: {
+  counter: number,
+  files: UploadedData[],
+  deleteFile: (url: string) => void,
+}) {
   const heading = `Your Files (${counter})`;
   const subHeading = "Manage your uploaded files";
   const text = "No files uploaded yet";
@@ -19,8 +27,8 @@ export default function ManageFiles({ counter }: { counter: number }) {
     </>
   );
   if (counter > 0) {
-    const uploadedData = getAllUploaded();
-    subContent = uploadedData.map((d) => <DisplayFile key={d.url} fileName={d.fileName} url={d.url} />);
+    const uploadedData = files;
+    subContent = uploadedData.map((d) => <DisplayFile key={d.url} uploadedData={d} deleteFile={deleteFile} />);
   }
 
   return (
