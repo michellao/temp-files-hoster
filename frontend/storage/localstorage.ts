@@ -14,12 +14,17 @@ const keyStorage = 'uploaded-data';
 type UploadedData = z.infer<typeof UploadedData>;
 
 function useUploadedData() {
-  const [fileCounter, setFileCounter] = useState(getSize);
-  const [files, setFiles] = useState<UploadedData[]>(getAllUploaded);
+  const [fileCounter, setFileCounter] = useState(0);
+  const [files, setFiles] = useState<UploadedData[]>([]);
 
   function saveOverrideToLocalStorage(backup: UploadedData[]) {
     localStorage.setItem(keyStorage, JSON.stringify(backup));
   }
+
+  useEffect(() => {
+    setFileCounter(getSize());
+    setFiles(getAllUploaded());
+  }, []);
 
   useEffect(() => {
     console.log('save to local storage');
