@@ -48,7 +48,7 @@ jobs:
         env:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
-      - uses: ./.github/workflows/frontend-setup.yml
+      - uses: ./.github/actions/setup-frontend
         with:
           working-directory: ./frontend
       - run: pnpm install
@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir -p ./src/main/resources/public
           cp -a ./frontend/out/* ./src/main/resources/public
-      - uses: ./.github/workflows/backend-setup.yml
+      - uses: ./.github/actions/setup-backend
       - name: Build with Gradle Wrapper
         run: ./gradlew build
       - name: Build image
@@ -86,7 +86,7 @@ jobs:
         working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/frontend-setup.yml
+      - uses: ./.github/actions/setup-frontend
         with:
           working-directory: ./frontend
       - name: Dump GitHub context
