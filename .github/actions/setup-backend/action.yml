@@ -13,12 +13,14 @@ runs:
       with:
         cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
     - name: Set environment variables
+      shell: bash
       run: |
         echo "AWS_ACCESS_KEY_ID=minioadmin" >> $GITHUB_ENV
         echo "AWS_SECRET_ACCESS_KEY=minioadmin" >> $GITHUB_ENV
         echo "AWS_ENDPOINT=http://localhost:9000" >> $GITHUB_ENV
         echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
     - name: Setup local S3
+      shell: bash
       run: |
         docker run --name minio1 --rm -p 9000:9000 -p 9001:9001 -d minio/minio server /data --console-address ":9001"
         sleep 3

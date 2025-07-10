@@ -83,7 +83,7 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/backend-setup.yml
+      - uses: ./.github/actions/setup-backend
       - name: Download frontend
         uses: actions/download-artifact@v4
         with:
