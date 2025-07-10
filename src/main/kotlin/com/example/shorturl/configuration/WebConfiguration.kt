@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 @Configuration
 class WebConfiguration : WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/resources/**")
+        registry.addResourceHandler("/**")
             .addResourceLocations("classpath:/public/")
             .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
     }

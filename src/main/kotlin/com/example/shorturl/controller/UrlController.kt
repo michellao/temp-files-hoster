@@ -1,6 +1,5 @@
 package com.example.shorturl.controller
 
-import com.example.shorturl.configuration.properties.MyAppProperties
 import com.example.shorturl.datasource.S3ClientData
 import com.example.shorturl.datasource.service.UrlService
 import com.example.shorturl.tools.ExpirationCalculator
@@ -18,12 +17,11 @@ import java.util.logging.Logger
 class UrlController(
     private val service: UrlService,
     private val s3: S3ClientData,
-    private val appProperties: MyAppProperties,
     private val expirationCalculator: ExpirationCalculator,
 ) {
     private val logger = Logger.getLogger(this.javaClass.name)
 
-    @GetMapping("/{generatedUrl}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    @GetMapping("/{generatedUrl:^(?!index\\.html$|favico\\.ico$|robots\\.txt$).*}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun getFile(@PathVariable("generatedUrl") generatedUrl: String): ResponseEntity<ByteArray> {
         logger.info("Try access to: $generatedUrl")
         service.findByUrl("/$generatedUrl")?.let { url ->
@@ -33,7 +31,7 @@ class UrlController(
         return ResponseEntity.notFound().build()
     }
 
-    @PostMapping("/{generatedUrl}")
+    @PostMapping("/{generatedUrl:^(?!index\\.html$|favico\\.ico$|robots\\.txt$).*}")
     fun manageFile(
         @PathVariable("generatedUrl") generatedUrl: String,
         @RequestParam("token") token: String,
