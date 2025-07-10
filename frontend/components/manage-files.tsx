@@ -2,7 +2,7 @@ import { FileIcon } from "@radix-ui/react-icons";
 import Section from "./section";
 import { Flex, Text } from "@radix-ui/themes";
 import TextSubtle from "./text-subtle";
-import { UploadedData } from "@/storage/localstorage";
+import { UploadedData } from "@/lib/localstorage";
 import DisplayFile from "./display-file";
 
 export default function ManageFiles({
