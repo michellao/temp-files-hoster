@@ -1,7 +1,6 @@
 import * as Sentry from "@sentry/nextjs";
 
 if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
-  console.log('Initializing Sentry');
   Sentry.init({
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
