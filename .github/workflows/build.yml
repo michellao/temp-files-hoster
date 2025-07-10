@@ -24,10 +24,6 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - name: Dump Vars context
-        env:
-          VARS_CONTEXT: ${{ toJson(vars) }}
-        run: echo "$VARS_CONTEXT"
       - uses: ./.github/actions/setup-frontend
         with:
           working-directory: ./frontend
