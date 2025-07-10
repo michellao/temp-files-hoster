@@ -2,7 +2,7 @@
 
 import ManageFiles from "@/components/manage-files";
 import UploadFiles from "@/components/upload-files";
-import { useUploadedData } from "@/storage/localstorage";
+import { useUploadedData } from "@/lib/localstorage";
 
 export default function ContainerApp() {
   const { counter, files, addFile, deleteFile } = useUploadedData();
