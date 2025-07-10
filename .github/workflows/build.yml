@@ -24,6 +24,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+      - name: Dump Vars context
+        env:
+          VARS_CONTEXT: ${{ toJson(vars) }}
+        run: echo "$VARS_CONTEXT"
       - uses: ./.github/actions/setup-frontend
         with:
           working-directory: ./frontend
@@ -32,6 +36,10 @@ jobs:
       - name: Build public frontend
         run: NEXT_TELEMETRY_DISABLED=1 pnpm build
         working-directory: ./frontend
+        env:
+          NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
       - name: Copy output frontend to backend
         run: |
           mkdir -p ./src/main/resources/public
