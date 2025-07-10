@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import * as z from "zod/v4-mini";
+import * as z from "zod/mini";
 
 const UploadedData = z.object({
   fileName: z.string(),
