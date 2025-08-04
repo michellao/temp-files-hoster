@@ -5,9 +5,9 @@ LABEL org.opencontainers.image.licenses="MIT"
 
 RUN adduser -Dh /app app
 USER app
-COPY ./build/libs/shorturl-0.0.1-SNAPSHOT.jar /app
+COPY ./build/libs/shorturl-?.?.?.jar /app
 
 WORKDIR /app
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-Xms512M", "-Xmx1G", "-jar", "shorturl-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-Xms512M", "-Xmx1G", "-jar", "shorturl-[[:digit:]].[[:digit:]].[[:digit:]].jar"]
