@@ -16,8 +16,11 @@ env:
   REGISTRY: ghcr.io
 jobs:
   build-private:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
     environment: Production
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
       packages: write
@@ -80,7 +83,10 @@ jobs:
             ./frontend/out/
   build-backend:
     needs: build-frontend
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
       packages: write
