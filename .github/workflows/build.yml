@@ -101,9 +101,10 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew build
       - name: Save artifact
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: 'artifact'
+          name: artifact-${{ runner.architecture }}
           path: |
             ./build/libs/shorturl-*.jar
             !./build/libs/shorturl-*-plain.jar
