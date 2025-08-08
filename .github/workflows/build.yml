@@ -47,9 +47,9 @@ jobs:
         run: ./gradlew build
       - name: Build image
         run: |
-          if [ $RUNNER_ARCH == "X64" ]; then
+          if [[ $RUNNER_ARCH == "X64" ]]; then
             export PLATFORM="linux/amd64"
-          else if [ $RUNNER_ARCH == "ARM64" ]; then
+          else if [[ $RUNNER_ARCH == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
           fi
           docker build --platform $PLATFORM --annotation "org.opencontainers.image.description=Simple file transfer with interface" -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
@@ -116,9 +116,9 @@ jobs:
           compression-level: 0
       - name: Build image
         run: |
-          if [ $RUNNER_ARCH == "X64" ]; then
+          if [[ "$RUNNER_ARCH" == "X64" ]]; then
             export PLATFORM="linux/amd64"
-          else if [ $RUNNER_ARCH == "ARM64" ]; then
+          else if [[ "$RUNNER_ARCH" == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
           fi
           docker build --platform $PLATFORM --annotation "org.opencontainers.image.description=Simple file transfer with interface" -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
