@@ -168,6 +168,7 @@ jobs:
       contents: read
       packages: write
     steps:
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
       - name: Reassemble images in one multi arch image
         env:
           VERSION: ${{ needs.setup-version.outputs.version }}
