@@ -18,7 +18,7 @@ jobs:
   setup-version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.first.outputs. }}
+      version: ${{ steps.first.outputs.version }}
     steps:
       - id: first
         run: |
@@ -36,6 +36,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      private-image-id: ${{ steps.build-image.outputs.private-image-id }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-frontend
@@ -110,6 +112,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      image-id: ${{ steps.build-image.outputs.image-id }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-backend
