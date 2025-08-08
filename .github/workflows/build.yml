@@ -62,7 +62,7 @@ jobs:
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
           [[ "$VERSION" == "main" ]] && VERSION=latest
           
-          docker buildx build --platform linux/amd64,linux/arm64 \
+          docker buildx build --platform "$PLATFORM" \
             --annotation "index,manifest:org.opencontainers.image.description=Simple file transfer with interface" \
             -t $PRIVATE_IMAGE_ID:$VERSION --push --label "runnumber=${GITHUB_RUN_ID}" .
 
@@ -134,6 +134,6 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           
-          docker buildx build --platform linux/amd64,linux/arm64 \
+          docker buildx build --platform "$PLATFORM" \
             --annotation "org.opencontainers.image.description=Simple file transfer with interface" \
             -t $IMAGE_ID:$VERSION --push --label "runnumber=${GITHUB_RUN_ID}" .
