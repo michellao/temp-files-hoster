@@ -15,7 +15,19 @@ env:
   PRIVATE_IMAGE_NAME: my-files-hoster
   REGISTRY: ghcr.io
 jobs:
+  setup-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.first.outputs. }}
+    steps:
+      - id: first
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [[ "$VERSION" == "main" ]] && VERSION=latest
+          echo version=$VERSION >> "$GITHUB_OUTPUT"
   build-private:
+    needs: setup-version
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm]
@@ -47,24 +59,26 @@ jobs:
         run: ./gradlew build
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
-      - name: Build image and push image
+      - id: build-image
+        name: Build image and push image
+        env:
+          VERSION: ${{ needs.setup-version.outputs.version }}
         run: |
           if [[ $RUNNER_ARCH == "X64" ]]; then
             export PLATFORM="linux/amd64"
+            export ARCH="amd64"
           elif [[ $RUNNER_ARCH == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
+            export ARCH="arm64"
           fi
           
           PRIVATE_IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$PRIVATE_IMAGE_NAME"
           PRIVATE_IMAGE_ID=$(echo $PRIVATE_IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          [[ "$VERSION" == "main" ]] && VERSION=latest
           
           docker buildx build --platform "$PLATFORM" \
-            --annotation "index,manifest:org.opencontainers.image.description=Simple file transfer with interface" \
-            -t $PRIVATE_IMAGE_ID:$VERSION --push --label "runnumber=${GITHUB_RUN_ID}" .
+            -t "$PRIVATE_IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
+          
+          echo "private-image-id=$PRIVATE_IMAGE_ID" >> "$GITHUB_OUTPUT"
 
   build-frontend:
     runs-on: ubuntu-latest
@@ -86,7 +100,9 @@ jobs:
           path: |
             ./frontend/out/
   build-backend:
-    needs: build-frontend
+    needs:
+      - setup-version
+      - build-frontend
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm]
@@ -115,25 +131,65 @@ jobs:
           compression-level: 0
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
-      - name: Build image and push image
+      - id: build-image
+        name: Build image and push image
+        env:
+          VERSION: ${{ needs.setup-version.outputs.version }}
         run: |
           if [[ "$RUNNER_ARCH" == "X64" ]]; then
             export PLATFORM="linux/amd64"
+            export ARCH="amd64"
           elif [[ "$RUNNER_ARCH" == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
+            export ARCH="arm64"
           fi
           
           IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME"
-
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          [[ "$VERSION" == "main" ]] && VERSION=latest
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           
           docker buildx build --platform "$PLATFORM" \
+            -t "$IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
+          echo "image-id=$IMAGE_ID" >> "$GITHUB_OUTPUT"
+
+  reassemble-image:
+    runs-on: ubuntu-latest
+    needs:
+      - setup-version
+      - build-backend
+      - build-private
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Reassemble images in one multi arch image
+        env:
+          VERSION: ${{ needs.setup-version.outputs.version }}
+          IMAGE_ID: ${{ needs.build-backend.outputs.image-id }}
+          PRIVATE_IMAGE_ID: ${{ needs.build-private.outputs.private.image-id }}
+        run: |
+          docker buildx imagetools create \
+            -t $IMAGE_ID:$VERSION \
             --annotation "org.opencontainers.image.description=Simple file transfer with interface" \
-            -t $IMAGE_ID:$VERSION --push --label "runnumber=${GITHUB_RUN_ID}" .
+            "$IMAGE_ID:$VERSION-amd64" \
+            "$IMAGE_ID:$VERSION-arm64"
+          
+          curl -X DELETE \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28"
+            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$VERSION"
+          
+          docker buildx imagetools create \
+            -t $PRIVATE_IMAGE_ID:$VERSION \
+            --annotation "org.opencontainers.image.description=Simple file transfer with interface" \
+            "$PRIVATE_IMAGE_ID:$VERSION-amd64" \
+            "$PRIVATE_IMAGE_ID:$VERSION-arm64"
+
+            curl -X DELETE \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28"
+              "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$VERSION"
