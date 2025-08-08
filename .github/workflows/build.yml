@@ -49,7 +49,7 @@ jobs:
         run: |
           if [[ $RUNNER_ARCH == "X64" ]]; then
             export PLATFORM="linux/amd64"
-          else if [[ $RUNNER_ARCH == "ARM64" ]]; then
+          elif [[ $RUNNER_ARCH == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
           fi
           echo $PLATFORM
@@ -110,7 +110,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: artifact-${{ runner.architecture }}
+          name: artifact-${{ runner.arch }}
           path: |
             ./build/libs/shorturl-*.jar
             !./build/libs/shorturl-*-plain.jar
@@ -119,7 +119,7 @@ jobs:
         run: |
           if [[ "$RUNNER_ARCH" == "X64" ]]; then
             export PLATFORM="linux/amd64"
-          else if [[ "$RUNNER_ARCH" == "ARM64" ]]; then
+          elif [[ "$RUNNER_ARCH" == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
           fi
           docker build --platform "$PLATFORM" --annotation "org.opencontainers.image.description=Simple file transfer with interface" -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
