@@ -52,7 +52,8 @@ jobs:
           else if [[ $RUNNER_ARCH == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
           fi
-          docker build --platform $PLATFORM --annotation "org.opencontainers.image.description=Simple file transfer with interface" -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+          echo $PLATFORM
+          docker build --platform "$PLATFORM" --annotation "org.opencontainers.image.description=Simple file transfer with interface" -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
       - name: Push image
@@ -121,7 +122,7 @@ jobs:
           else if [[ "$RUNNER_ARCH" == "ARM64" ]]; then
             export PLATFORM="linux/arm64"
           fi
-          docker build --platform $PLATFORM --annotation "org.opencontainers.image.description=Simple file transfer with interface" -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
+          docker build --platform "$PLATFORM" --annotation "org.opencontainers.image.description=Simple file transfer with interface" -t $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}" .
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
 
