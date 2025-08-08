@@ -169,7 +169,7 @@ jobs:
       packages: write
     steps:
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
-      - name: Reassemble images in one multi arch image
+      - name: Reassemble images in one multi arch image on public package
         env:
           VERSION: ${{ needs.setup-version.outputs.version }}
           IMAGE_ID: ${{ needs.build-backend.outputs.image-id }}
@@ -181,20 +181,56 @@ jobs:
             "$IMAGE_ID:$VERSION-amd64" \
             "$IMAGE_ID:$VERSION-arm64"
           
+          LIST_PACKAGES=$(curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions")
+          
+          PACKAGE_AMD64_ID=$(echo $LIST_PACKAGES | \
+            jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-amd64") | .id')
+          
+          PACKAGE_ARM64_ID=$(echo $LIST_PACKAGES | \
+            jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-arm64") | .id')
+          
           curl -X DELETE \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$VERSION"
+            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
           
+          curl -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$PACKAGE_ARM64_ID"
+          
+      - name: Reassemble images in one multi arch image on private package
+        run: |
           docker buildx imagetools create \
             -t $PRIVATE_IMAGE_ID:$VERSION \
             --annotation "org.opencontainers.image.description=Simple file transfer with interface" \
             "$PRIVATE_IMAGE_ID:$VERSION-amd64" \
             "$PRIVATE_IMAGE_ID:$VERSION-arm64"
 
-            curl -X DELETE \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"  \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$VERSION"
+          LIST_PRIVATE_PACKAGES=$(curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions")
+          
+          PACKAGE_AMD64_ID=$(echo $LIST_PACKAGES | \
+            jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-amd64") | .id')
+          
+          PACKAGE_ARM64_ID=$(echo $LIST_PACKAGES | \
+            jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-arm64") | .id')
+
+          curl -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"  \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
+          
+          curl -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"  \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$PACKAGE_ARM64_ID"
