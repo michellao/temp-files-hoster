@@ -175,7 +175,7 @@ jobs:
         env:
           VERSION: ${{ needs.setup-version.outputs.version }}
           IMAGE_ID: ${{ needs.build-backend.outputs.image-id }}
-          PRIVATE_IMAGE_ID: ${{ needs.build-private.outputs.private.private-image-id }}
+          PRIVATE_IMAGE_ID: ${{ needs.build-private.outputs.private-image-id }}
         run: |
           docker buildx imagetools create \
             -t $IMAGE_ID:$VERSION \
@@ -186,11 +186,17 @@ jobs:
           LIST_PACKAGES=$(eval $CURL_CMD -L \
             "https://api.github.com/user/packages/container/$IMAGE_NAME/versions")
           
+          echo $LIST_PACKAGES
+          
           PACKAGE_AMD64_ID=$(echo -n $LIST_PACKAGES | \
             jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-amd64") | .id')
           
+          echo $PACKAGE_AMD64_ID
+          
           PACKAGE_ARM64_ID=$(echo -n $LIST_PACKAGES | \
             jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-arm64") | .id')
+          
+          echo $PACKAGE_ARM64_ID
           
           eval $CURL_CMD -X DELETE \
             "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
@@ -209,12 +215,18 @@ jobs:
           LIST_PRIVATE_PACKAGES=$(eval $CURL_CMD -L \
             "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions")
           
+          echo $LIST_PRIVATE_PACKAGES
+          
           PACKAGE_AMD64_ID=$(echo -n $LIST_PACKAGES | \
             jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-amd64") | .id')
+          
+          echo $PACKAGE_AMD64_ID
           
           PACKAGE_ARM64_ID=$(echo -n $LIST_PACKAGES | \
             jq '.[] | select(.metadata.container.tags.[0]=="$VERSION-arm64") | .id')
 
+          echo $PACKAGE_ARM64_ID
+          
           eval $CURL_CMD -X DELETE \
             "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
           
