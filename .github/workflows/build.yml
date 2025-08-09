@@ -167,15 +167,15 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      VERSION: ${{ needs.setup-version.outputs.version }}
+      IMAGE_ID: ${{ needs.build-backend.outputs.image-id }}
+      PRIVATE_IMAGE_ID: ${{ needs.build-private.outputs.private-image-id }}
     steps:
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
       - run: |
           echo 'CURL_CMD=curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28"' >> "$GITHUB_ENV"
       - name: Reassemble images in one multi arch image on public package
-        env:
-          VERSION: ${{ needs.setup-version.outputs.version }}
-          IMAGE_ID: ${{ needs.build-backend.outputs.image-id }}
-          PRIVATE_IMAGE_ID: ${{ needs.build-private.outputs.private-image-id }}
         run: |
           docker buildx imagetools create \
             -t $IMAGE_ID:$VERSION \
@@ -185,8 +185,6 @@ jobs:
           
           LIST_PACKAGES=$(eval $CURL_CMD -L \
             "https://api.github.com/user/packages/container/$IMAGE_NAME/versions")
-          
-          echo $LIST_PACKAGES
           
           PACKAGE_AMD64_ID=$(echo -n $LIST_PACKAGES | \
             jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-amd64") | .id')
@@ -214,8 +212,6 @@ jobs:
 
           LIST_PRIVATE_PACKAGES=$(eval $CURL_CMD -L \
             "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions")
-          
-          echo $LIST_PRIVATE_PACKAGES
           
           PACKAGE_AMD64_ID=$(echo -n $LIST_PACKAGES | \
             jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-amd64") | .id')
