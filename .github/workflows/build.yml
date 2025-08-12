@@ -78,6 +78,7 @@ jobs:
           PRIVATE_IMAGE_ID=$(echo $PRIVATE_IMAGE_ID | tr '[A-Z]' '[a-z]')
           
           docker buildx build --platform "$PLATFORM" \
+            --annotation "manifest:org.opencontainers.image.description=Simple file transfer service" \
             -t "$PRIVATE_IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
           
           echo "private-image-id=$PRIVATE_IMAGE_ID" >> "$GITHUB_OUTPUT"
@@ -155,6 +156,7 @@ jobs:
           echo VERSION=$VERSION
           
           docker buildx build --platform "$PLATFORM" \
+            --annotation "manifest:org.opencontainers.image.description=Simple file transfer service" \
             -t "$IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
           echo "image-id=$IMAGE_ID" >> "$GITHUB_OUTPUT"
 
