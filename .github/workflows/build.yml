@@ -184,24 +184,24 @@ jobs:
             "$IMAGE_ID:$VERSION-amd64" \
             "$IMAGE_ID:$VERSION-arm64"
           
-          LIST_PACKAGES=$(eval $CURL_CMD -L \
-            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions")
-          
-          PACKAGE_AMD64_ID=$(echo -n $LIST_PACKAGES | \
-            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-amd64") | .id')
-          
-          echo $PACKAGE_AMD64_ID
-          
-          PACKAGE_ARM64_ID=$(echo -n $LIST_PACKAGES | \
-            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-arm64") | .id')
-          
-          echo $PACKAGE_ARM64_ID
-          
-          eval $CURL_CMD -X DELETE \
-            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
-          
-          eval $CURL_CMD -X DELETE \
-            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$PACKAGE_ARM64_ID"
+#          LIST_PACKAGES=$(eval $CURL_CMD -L \
+#            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions")
+#
+#          PACKAGE_AMD64_ID=$(echo -n $LIST_PACKAGES | \
+#            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-amd64") | .id')
+#
+#          echo $PACKAGE_AMD64_ID
+#
+#          PACKAGE_ARM64_ID=$(echo -n $LIST_PACKAGES | \
+#            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-arm64") | .id')
+#
+#          echo $PACKAGE_ARM64_ID
+#
+#          eval $CURL_CMD -X DELETE \
+#            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
+#
+#          eval $CURL_CMD -X DELETE \
+#            "https://api.github.com/user/packages/container/$IMAGE_NAME/versions/$PACKAGE_ARM64_ID"
           
       - name: Reassemble images in one multi arch image on private package
         run: |
@@ -210,21 +210,21 @@ jobs:
             "$PRIVATE_IMAGE_ID:$VERSION-amd64" \
             "$PRIVATE_IMAGE_ID:$VERSION-arm64"
 
-          LIST_PRIVATE_PACKAGES=$(eval $CURL_CMD -L \
-            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions")
-          
-          PACKAGE_AMD64_ID=$(echo -n $LIST_PRIVATE_PACKAGES | \
-            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-amd64") | .id')
-          
-          echo $PACKAGE_AMD64_ID
-          
-          PACKAGE_ARM64_ID=$(echo -n $LIST_PRIVATE_PACKAGES | \
-            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-arm64") | .id')
-
-          echo $PACKAGE_ARM64_ID
-          
-          eval $CURL_CMD -X DELETE \
-            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
-          
-          eval $CURL_CMD -X DELETE \
-            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$PACKAGE_ARM64_ID"
+#          LIST_PRIVATE_PACKAGES=$(eval $CURL_CMD -L \
+#            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions")
+#
+#          PACKAGE_AMD64_ID=$(echo -n $LIST_PRIVATE_PACKAGES | \
+#            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-amd64") | .id')
+#
+#          echo $PACKAGE_AMD64_ID
+#
+#          PACKAGE_ARM64_ID=$(echo -n $LIST_PRIVATE_PACKAGES | \
+#            jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-arm64") | .id')
+#
+#          echo $PACKAGE_ARM64_ID
+#
+#          eval $CURL_CMD -X DELETE \
+#            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$PACKAGE_AMD64_ID"
+#
+#          eval $CURL_CMD -X DELETE \
+#            "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions/$PACKAGE_ARM64_ID"
