@@ -213,14 +213,12 @@ jobs:
           LIST_PRIVATE_PACKAGES=$(eval $CURL_CMD -L \
             "https://api.github.com/user/packages/container/$PRIVATE_IMAGE_NAME/versions")
           
-          echo $LIST_PRIVATE_PACKAGES
-          
-          PACKAGE_AMD64_ID=$(echo -n $LIST_PACKAGES | \
+          PACKAGE_AMD64_ID=$(echo -n $LIST_PRIVATE_PACKAGES | \
             jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-amd64") | .id')
           
           echo $PACKAGE_AMD64_ID
           
-          PACKAGE_ARM64_ID=$(echo -n $LIST_PACKAGES | \
+          PACKAGE_ARM64_ID=$(echo -n $LIST_PRIVATE_PACKAGES | \
             jq --arg version $VERSION '.[] | select(.metadata.container.tags.[0]=="\($version)-arm64") | .id')
 
           echo $PACKAGE_ARM64_ID
