@@ -2,14 +2,10 @@
 
 ## Requirements
 
-You need an instance of AWS S3 or an endpoint S3 like MinIO.
-
-## How to setup for development
-
-### Requirements
-
 - MinIO server or AWS S3 instance
 - PostgreSQL Database
+
+## How to setup for development
 
 You can use `docker-compose-dev.yaml` to start services
 
