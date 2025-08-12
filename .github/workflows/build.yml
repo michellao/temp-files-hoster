@@ -179,7 +179,6 @@ jobs:
         run: |
           docker buildx imagetools create \
             -t $IMAGE_ID:$VERSION \
-            --annotation "manifest:org.opencontainers.image.description=Simple file transfer service with interface" \
             "$IMAGE_ID:$VERSION-amd64" \
             "$IMAGE_ID:$VERSION-arm64"
           
@@ -206,7 +205,6 @@ jobs:
         run: |
           docker buildx imagetools create \
             -t $PRIVATE_IMAGE_ID:$VERSION \
-            --annotation "manifest:org.opencontainers.image.description=Simple file transfer service with interface" \
             "$PRIVATE_IMAGE_ID:$VERSION-amd64" \
             "$PRIVATE_IMAGE_ID:$VERSION-arm64"
 
