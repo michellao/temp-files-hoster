@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { Flex, Heading, Text } from "@radix-ui/themes";
 import ContainerApp from "./container-app";
+import Footer from "./footer";
 
 export default function Page() {
+  const dcmaEmail = process.env.NEXT_PUBLIC_DMCA_EMAIL;
   return (
     <>
       <Flex direction="column" align="center" mb="5">
@@ -24,6 +26,11 @@ export default function Page() {
       <main>
         <ContainerApp/>
       </main>
+      {dcmaEmail &&
+        <footer>
+          <Footer email={dcmaEmail} />
+        </footer>
+      }
     </>
   );
 }

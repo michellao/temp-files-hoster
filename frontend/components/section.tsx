@@ -2,6 +2,7 @@ import { Flex, FlexProps, Heading, IconProps } from "@radix-ui/themes";
 import TextSubtle from "./text-subtle";
 import React from "react";
 import styles from "./section-style.module.css";
+import ResponsiveWidth from "./responsive-width";
 
 export default function Section({
   icon: Icon,
@@ -17,10 +18,7 @@ export default function Section({
   height?: FlexProps['height']
 }) {
   return (
-    <Flex className={styles.shadow} width={{
-      initial: "100%",
-      sm: "80%"
-    }}>
+    <ResponsiveWidth className={styles.shadow}>
       <Flex className={styles.margin}>
         <Flex direction="column" width="100%" height={height}>
           <Flex direction="column">
@@ -30,6 +28,6 @@ export default function Section({
           { children }
         </Flex>
       </Flex>
-    </Flex>
+    </ResponsiveWidth>
   );
 }
