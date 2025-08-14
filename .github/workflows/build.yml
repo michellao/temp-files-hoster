@@ -52,6 +52,7 @@ jobs:
           NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+          NEXT_PUBLIC_DMCA_EMAIL: ${{ vars.NEXT_PUBLIC_DMCA_EMAIL }}
       - name: Copy output frontend to backend
         run: |
           mkdir -p ./src/main/resources/public
@@ -73,14 +74,14 @@ jobs:
             export PLATFORM="linux/arm64"
             export ARCH="arm64"
           fi
-          
+
           PRIVATE_IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$PRIVATE_IMAGE_NAME"
           PRIVATE_IMAGE_ID=$(echo $PRIVATE_IMAGE_ID | tr '[A-Z]' '[a-z]')
-          
+
           docker buildx build --platform "$PLATFORM" \
             --annotation "manifest:org.opencontainers.image.description=Simple file transfer service" \
             -t "$PRIVATE_IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
-          
+
           echo "private-image-id=$PRIVATE_IMAGE_ID" >> "$GITHUB_OUTPUT"
 
   build-frontend:
@@ -148,13 +149,13 @@ jobs:
             export PLATFORM="linux/arm64"
             export ARCH="arm64"
           fi
-          
+
           IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME"
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
-          
+
           docker buildx build --platform "$PLATFORM" \
             --annotation "manifest:org.opencontainers.image.description=Simple file transfer service" \
             -t "$IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
@@ -183,7 +184,7 @@ jobs:
             -t $IMAGE_ID:$VERSION \
             "$IMAGE_ID:$VERSION-amd64" \
             "$IMAGE_ID:$VERSION-arm64"
-          
+
       - name: Reassemble images in one multi arch image on private package
         run: |
           docker buildx imagetools create \
