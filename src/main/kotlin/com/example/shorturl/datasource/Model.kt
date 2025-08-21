@@ -5,6 +5,12 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mapping.MappingException
 import java.util.Date
 
+data class AboutApp(
+    val branch: String,
+    val shortCommit: String,
+    val commit: String,
+)
+
 @Table
 data class Account(
     val apiKey: String,
