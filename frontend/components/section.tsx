@@ -9,23 +9,25 @@ export default function Section({
   heading,
   subHeading,
   children,
-  height
+  height,
 }: {
-  icon?: React.ComponentType<IconProps>,
-  heading: String,
-  subHeading: String,
-  children?: React.ReactNode,
-  height?: FlexProps['height']
+  icon?: React.ComponentType<IconProps>;
+  heading: String;
+  subHeading: String;
+  children?: React.ReactNode;
+  height?: FlexProps["height"];
 }) {
   return (
     <ResponsiveWidth className={styles.shadow}>
       <Flex className={styles.margin}>
         <Flex direction="column" width="100%" height={height}>
           <Flex direction="column">
-            <Heading as="h2">{Icon && <Icon width="20px" height="20px"/>} { heading }</Heading>
-            <TextSubtle>{ subHeading }</TextSubtle>
+            <Heading as="h2">
+              {Icon && <Icon width="20px" height="20px" />} {heading}
+            </Heading>
+            <TextSubtle>{subHeading}</TextSubtle>
           </Flex>
-          { children }
+          {children}
         </Flex>
       </Flex>
     </ResponsiveWidth>

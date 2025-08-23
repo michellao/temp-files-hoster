@@ -9,7 +9,7 @@ const UploadedData = z.object({
 
 const UploadedDataArray = z.array(UploadedData);
 
-const keyStorage = 'uploaded-data';
+const keyStorage = "uploaded-data";
 
 type UploadedData = z.infer<typeof UploadedData>;
 
@@ -31,20 +31,18 @@ function useUploadedData() {
   }, [files, fileCounter]);
 
   function addFile(fileName: string, xToken: string, url: string) {
-    setFileCounter(c => c + 1);
+    setFileCounter((c) => c + 1);
     const data: UploadedData = {
       fileName,
       token: xToken,
-      url
+      url,
     };
-    setFiles(f => [...f, data]);
+    setFiles((f) => [...f, data]);
   }
 
   function deleteFile(url: string) {
-    setFileCounter(c => c - 1);
-    setFiles(f =>
-      f.filter(file => file.url !== url)
-    );
+    setFileCounter((c) => c - 1);
+    setFiles((f) => f.filter((file) => file.url !== url));
   }
 
   const props = {
@@ -87,10 +85,6 @@ function getSize(): number {
   }
 }
 
-export {
-  useUploadedData,
-};
+export { useUploadedData };
 
-export type {
-  UploadedData,
-};
+export type { UploadedData };

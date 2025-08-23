@@ -10,7 +10,8 @@
     margin: 20px;
 }
 
-.shadow, .border {
+.shadow,
+.border {
     border-radius: 0.5rem;
 }
 

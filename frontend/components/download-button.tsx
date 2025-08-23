@@ -5,7 +5,7 @@ import Link, { LinkProps } from "next/link";
 const DownloadButton = (props: LinkProps) => (
   <Button asChild>
     <Link prefetch={false} {...props}>
-      <DownloadIcon/>
+      <DownloadIcon />
     </Link>
   </Button>
 );
