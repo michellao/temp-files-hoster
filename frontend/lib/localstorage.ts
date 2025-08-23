@@ -27,7 +27,6 @@ function useUploadedData() {
   }, []);
 
   useEffect(() => {
-    console.log('save to local storage');
     saveOverrideToLocalStorage(files);
   }, [files, fileCounter]);
 
