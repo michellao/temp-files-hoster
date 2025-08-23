@@ -39,7 +39,7 @@ jobs:
     outputs:
       private-image-id: ${{ steps.build-image.outputs.private-image-id }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-frontend
         with:
           working-directory: ./frontend
@@ -90,7 +90,7 @@ jobs:
       run:
         working-directory: ./frontend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-frontend
         with:
           working-directory: ./frontend
@@ -117,7 +117,7 @@ jobs:
     outputs:
       image-id: ${{ steps.build-image.outputs.image-id }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-backend
       - name: Download frontend
         uses: actions/download-artifact@v5
