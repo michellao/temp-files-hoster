@@ -1,5 +1,5 @@
 import { ClipboardIcon } from "@radix-ui/react-icons";
-import { Button, ButtonProps } from "@radix-ui/themes";
+import { Button, type ButtonProps } from "@radix-ui/themes";
 
 function setClipboard(url: string) {
   navigator.clipboard.writeText(url);

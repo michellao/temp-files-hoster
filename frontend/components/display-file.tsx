@@ -4,7 +4,7 @@ import { Flex, Text } from "@radix-ui/themes";
 import DownloadButton from "./download-button";
 import DeleteButton from "./delete-button";
 import ClipboardButton from "./clipboard-button";
-import { UploadedData } from "@/lib/localstorage";
+import type { UploadedData } from "@/lib/localstorage";
 
 export default function DisplayFile({
   uploadedData,

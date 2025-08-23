@@ -1,5 +1,5 @@
-import React from "react";
-import { Metadata } from "next";
+import type React from "react";
+import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "@radix-ui/themes/styles.css";
 import "./my-style.css";

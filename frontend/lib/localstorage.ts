@@ -28,7 +28,7 @@ function useUploadedData() {
 
   useEffect(() => {
     saveOverrideToLocalStorage(files);
-  }, [files, fileCounter]);
+  }, [files]);
 
   function addFile(fileName: string, xToken: string, url: string) {
     setFileCounter((c) => c + 1);

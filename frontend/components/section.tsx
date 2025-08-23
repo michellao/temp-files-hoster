@@ -1,6 +1,6 @@
-import { Flex, FlexProps, Heading, IconProps } from "@radix-ui/themes";
+import { Flex, type FlexProps, Heading, type IconProps } from "@radix-ui/themes";
 import TextSubtle from "./text-subtle";
-import React from "react";
+import type React from "react";
 import styles from "./section-style.module.css";
 import ResponsiveWidth from "./responsive-width";
 
@@ -12,8 +12,8 @@ export default function Section({
   height,
 }: {
   icon?: React.ComponentType<IconProps>;
-  heading: String;
-  subHeading: String;
+  heading: string;
+  subHeading: string;
   children?: React.ReactNode;
   height?: FlexProps["height"];
 }) {

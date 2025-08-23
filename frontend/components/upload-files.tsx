@@ -5,7 +5,7 @@ import UploadButton from "./upload-button";
 import { Flex, Text } from "@radix-ui/themes";
 import TextSubtle from "./text-subtle";
 import styles from "./section-style.module.css";
-import React from "react";
+import type React from "react";
 
 export default function UploadFiles({
   addFile,
@@ -17,7 +17,7 @@ export default function UploadFiles({
   const text = "Choose a file or drag here";
   const subText = "Support for any file type up to 500 MB";
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL!;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "/";
 
   const triggerFileInput = () => {
     document.getElementById("file-upload")?.click();
@@ -37,12 +37,12 @@ export default function UploadFiles({
           const token = result.headers.get("X-Token");
           if (url && token) {
             const reader = url.getReader();
-            let data = await reader.read();
+            const data = await reader.read();
             const urlString = new TextDecoder().decode(data.value);
             addFile(fileName, token, urlString);
           }
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.log("Failed to uploaded:", e);
       }
     }

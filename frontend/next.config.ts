@@ -12,6 +12,9 @@ requiredEnvVars.forEach((envVar) => {
 let nextConfig: NextConfig = {
   devIndicators: false,
   output: "export",
+  experimental: {
+    typedEnv: true,
+  }
 };
 
 if (

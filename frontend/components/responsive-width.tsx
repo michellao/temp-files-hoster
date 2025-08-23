@@ -1,5 +1,4 @@
-import React from "react";
-import { Flex, FlexProps } from "@radix-ui/themes";
+import { Flex, type FlexProps } from "@radix-ui/themes";
 
 const ResponsiveWidth = (props: FlexProps) => (
   <Flex
