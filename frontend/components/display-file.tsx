@@ -1,10 +1,10 @@
 "use client";
 import { FileTextIcon } from "@radix-ui/react-icons";
 import { Flex, Text } from "@radix-ui/themes";
-import DownloadButton from "./download-button";
-import DeleteButton from "./delete-button";
-import ClipboardButton from "./clipboard-button";
 import type { UploadedData } from "@/lib/localstorage";
+import ClipboardButton from "./clipboard-button";
+import DeleteButton from "./delete-button";
+import DownloadButton from "./download-button";
 
 export default function DisplayFile({
   uploadedData,

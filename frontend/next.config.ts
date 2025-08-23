@@ -1,5 +1,5 @@
-import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import type { NextConfig } from "next";
 
 const requiredEnvVars = ["NEXT_PUBLIC_BACKEND_URL"];
 
@@ -14,7 +14,7 @@ let nextConfig: NextConfig = {
   output: "export",
   experimental: {
     typedEnv: true,
-  }
+  },
 };
 
 if (

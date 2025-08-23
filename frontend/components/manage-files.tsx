@@ -1,9 +1,9 @@
 import { FileIcon } from "@radix-ui/react-icons";
-import Section from "./section";
 import { Flex, Text } from "@radix-ui/themes";
-import TextSubtle from "./text-subtle";
 import type { UploadedData } from "@/lib/localstorage";
 import DisplayFile from "./display-file";
+import Section from "./section";
+import TextSubtle from "./text-subtle";
 
 export default function ManageFiles({
   counter,
