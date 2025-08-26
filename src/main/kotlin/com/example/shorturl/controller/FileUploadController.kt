@@ -52,7 +52,7 @@ class FileUploadController(
         if (!file.isEmpty) {
             val contentType = file.contentType ?: MediaType.APPLICATION_OCTET_STREAM.toString()
             val originalFileName = file.originalFilename
-            val sizeMebibytes = (file.size / 2.0.pow(20)).toLong()
+            val sizeMebibytes = file.size / 2.0.pow(20)
             var generatedUrl: String
             do {
                 generatedUrl = UrlHandler.generatorURL(14)
@@ -73,7 +73,7 @@ class FileUploadController(
                 originalFileName,
                 "/$generatedUrl",
                 MimeType.fromValue(contentType),
-                sizeMebibytes,
+                sizeMebibytes.toLong(),
                 token,
                 realIp,
                 userAgent,
@@ -88,6 +88,6 @@ class FileUploadController(
                 }
                 .body("${appProperties.baseUrl}/${generatedUrl}")
         }
-        return ResponseEntity.badRequest().body("error uploaded")
+        return ResponseEntity.badRequest().body("File to upload cannot be empty")
     }
 }

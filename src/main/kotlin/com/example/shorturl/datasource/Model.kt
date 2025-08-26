@@ -32,8 +32,8 @@ data class Url(
     @Id var id: Int? = null
 ) {
     init {
-        if (sizeMebiBytes > 512) {
-             throw MappingException("File must be inferior than 512 Mega bytes")
+        if (sizeMebiBytes > 512L) {
+             throw MappingException("File must be smaller than 512 MiB")
         }
     }
 }

@@ -2,7 +2,6 @@ package com.example.shorturl
 
 import com.example.shorturl.configuration.properties.MyAppProperties
 import jakarta.servlet.ServletContext
-import org.hamcrest.core.StringStartsWith
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -13,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import java.util.concurrent.TimeUnit
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -46,10 +45,11 @@ class FileUploadTests(@Autowired private val myApp: MyAppProperties) {
             "text/plain",
             "Hello world".toByteArray()
         )
+        val expireTime = TimeUnit.DAYS.toSeconds((myApp.expiration.maxDays + 1).toLong())
         mockMvc.perform {
             multipart("/")
                 .file(file)
-                .param("expires", "${(myApp.expiration.maxDays + 1) * 24 * 60 * 60}s")
+                .param("expires", "${expireTime}s")
                 .buildRequest(servletContext)
         }
             .andExpect(status().is4xxClientError)
