@@ -26,6 +26,7 @@ function useUploadedData() {
     setFiles(getAllUploaded());
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: suppressed for avoiding infinite loop
   useEffect(() => {
     saveOverrideToLocalStorage(files);
   }, [files]);

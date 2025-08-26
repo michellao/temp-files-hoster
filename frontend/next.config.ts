@@ -1,7 +1,7 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
-const requiredEnvVars = ["NEXT_PUBLIC_BACKEND_URL"];
+const requiredEnvVars = ["BACKEND_URL"];
 
 requiredEnvVars.forEach((envVar) => {
   if (!process.env[envVar]) {
@@ -11,10 +11,19 @@ requiredEnvVars.forEach((envVar) => {
 
 let nextConfig: NextConfig = {
   devIndicators: false,
-  output: "export",
   experimental: {
     typedEnv: true,
   },
+  async rewrites() {
+    return {
+        afterFiles: [
+            {
+                source: '/:path*',
+                destination: `${process.env.BACKEND_URL}/:path*`
+            }
+        ]
+    };
+  }
 };
 
 if (

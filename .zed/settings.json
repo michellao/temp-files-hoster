@@ -4,8 +4,56 @@
 // see the documentation: https://zed.dev/docs/configuring-zed#settings-files
 {
   "languages": {
+    "JavaScript": {
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
+    },
     "TypeScript": {
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      },
       "tab_size": 2
+    },
+    "TSX": {
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      },
+      "tab_size": 2
+    },
+    "JSON": {
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
+    },
+    "JSONC": {
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
+    },
+    "CSS": {
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
+    }
+  },
+  "lsp": {
+    "biome": {
+      "settings": {
+        "config_path": "./frontend/biome.jsonc"
+      }
     }
   }
 }

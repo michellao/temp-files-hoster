@@ -6,6 +6,7 @@ import Section from "./section";
 import styles from "./section-style.module.css";
 import TextSubtle from "./text-subtle";
 import UploadButton from "./upload-button";
+import { useId } from "react";
 
 export default function UploadFiles({
   addFile,
@@ -16,8 +17,7 @@ export default function UploadFiles({
   const subHeading = "Drag and drop files here or click to browse";
   const text = "Choose a file or drag here";
   const subText = "Support for any file type up to 500 MB";
-
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "/";
+  const inputId = useId();
 
   const triggerFileInput = () => {
     document.getElementById("file-upload")?.click();
@@ -49,7 +49,7 @@ export default function UploadFiles({
   };
 
   function upload(formData: FormData) {
-    const result = fetch(backendUrl, {
+    const result = fetch("/api/upload", {
       method: "POST",
       body: formData,
     });
@@ -71,7 +71,7 @@ export default function UploadFiles({
         className={styles.border}
         asChild
       >
-        <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+        <label htmlFor={inputId} style={{ cursor: "pointer" }}>
           <UploadIcon width="32px" height="32px" color="gray" />
           <Text as="p" size="4">
             {text}
@@ -80,7 +80,7 @@ export default function UploadFiles({
           <UploadButton onFileSelect={triggerFileInput} />
           <input
             type="file"
-            id="file-upload"
+            id={inputId}
             name="file"
             style={{ display: "none" }}
             onChange={handleFileChange}
