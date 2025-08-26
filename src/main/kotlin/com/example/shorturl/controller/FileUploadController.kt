@@ -86,7 +86,7 @@ class FileUploadController(
                 .headers {
                     it.set("X-Token", token)
                 }
-                .body("${appProperties.baseUrl ?: ""}/$generatedUrl")
+                .body("${appProperties.baseUrl}/${generatedUrl}")
         }
         return ResponseEntity.badRequest().body("error uploaded")
     }

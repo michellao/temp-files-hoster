@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 @ConfigurationProperties("app")
 class MyAppProperties {
-    var baseUrl: String? = null
+    lateinit var baseUrl: String
     lateinit var bucketName: String
     val expiration = Expiration()
     class Expiration {
