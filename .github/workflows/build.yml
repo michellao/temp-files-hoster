@@ -123,7 +123,8 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup variable for image
+      - id: image-vars
+        name: Setup variable for image
         run: |
           IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME"
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -134,7 +135,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
-          images: ${{ steps.meta.outputs.image-id }}
+          images: ${{ steps.image-vars.outputs.image-id }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 

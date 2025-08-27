@@ -1,14 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
-const requiredEnvVars = ["BACKEND_URL"];
-
-requiredEnvVars.forEach((envVar) => {
-  if (!process.env[envVar]) {
-    throw new Error(`Missing required environment variable: ${envVar}`);
-  }
-});
-
 let nextConfig: NextConfig = {
   output: "standalone",
   devIndicators: false,
