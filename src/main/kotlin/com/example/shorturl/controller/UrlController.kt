@@ -21,7 +21,7 @@ class UrlController(
 ) {
     private val logger = Logger.getLogger(this.javaClass.name)
 
-    @GetMapping("/{generatedUrl:^(?!index\\.html$|favico\\.ico$|robots\\.txt$).*}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    @GetMapping("/{generatedUrl}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun getFile(@PathVariable("generatedUrl") generatedUrl: String): ResponseEntity<ByteArray> {
         logger.info("Try access to: $generatedUrl")
         service.findByUrl("/$generatedUrl")?.let { url ->
@@ -31,7 +31,7 @@ class UrlController(
         return ResponseEntity.notFound().build()
     }
 
-    @PostMapping("/{generatedUrl:^(?!index\\.html$|favico\\.ico$|robots\\.txt$).*}")
+    @PostMapping("/{generatedUrl}")
     fun manageFile(
         @PathVariable("generatedUrl") generatedUrl: String,
         @RequestParam("token") token: String,

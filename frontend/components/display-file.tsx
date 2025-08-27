@@ -20,10 +20,10 @@ export default function DisplayFile({
     formData.append("token", token);
     formData.append("delete", "");
     const result = await fetch(url, {
-      method: "POST",
+      method: "DELETE",
       body: formData,
     });
-    if (result.ok && result.status === 202) {
+    if (result.status === 202 || result.status === 404) {
       deleteFile(url);
     }
   }

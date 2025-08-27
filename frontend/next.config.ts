@@ -6,17 +6,7 @@ let nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
     typedEnv: true,
-  },
-  async rewrites() {
-    return {
-      afterFiles: [
-        {
-          source: "/:slug",
-          destination: `${process.env.BACKEND_URL}/:slug`,
-        },
-      ],
-    };
-  },
+  }
 };
 
 if (
