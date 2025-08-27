@@ -12,6 +12,7 @@ on:
       - 'frontend/**'
 env:
   IMAGE_NAME: temp-files-hoster
+  IMAGE_FRONTEND_NAME: temp-files-hoster-nextjs
   PRIVATE_IMAGE_NAME: my-files-hoster
   REGISTRY: ghcr.io
 jobs:
@@ -28,89 +29,97 @@ jobs:
           echo version=$VERSION >> "$GITHUB_OUTPUT"
   build-private:
     needs: setup-version
-    strategy:
-      matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
     environment: Production
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    outputs:
-      private-image-id: ${{ steps.build-image.outputs.private-image-id }}
     steps:
       - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup-frontend
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          working-directory: ./frontend
-      - run: pnpm install
-        working-directory: ./frontend
-      - name: Build public frontend
-        run: NEXT_TELEMETRY_DISABLED=1 pnpm build
-        working-directory: ./frontend
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: private-image-vars
+        name: Setup variable for image
+        run: |
+          PRIVATE_IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$PRIVATE_IMAGE_NAME"
+          PRIVATE_IMAGE_ID=$(echo $PRIVATE_IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          echo "private-image-id=$PRIVATE_IMAGE_ID" >> "$GITHUB_OUTPUT"
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: ${{ steps.private-image-vars.outputs.private-image-id }}:${{ need.setup-version.outputs.version }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
         env:
           NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           NEXT_PUBLIC_DMCA_EMAIL: ${{ vars.NEXT_PUBLIC_DMCA_EMAIL }}
-      - name: Copy output frontend to backend
-        run: |
-          mkdir -p ./src/main/resources/public
-          cp -a ./frontend/out/* ./src/main/resources/public
-      - uses: ./.github/actions/setup-backend
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
-      - id: build-image
-        name: Build image and push image
-        env:
-          VERSION: ${{ needs.setup-version.outputs.version }}
-        run: |
-          if [[ $RUNNER_ARCH == "X64" ]]; then
-            export PLATFORM="linux/amd64"
-            export ARCH="amd64"
-          elif [[ $RUNNER_ARCH == "ARM64" ]]; then
-            export PLATFORM="linux/arm64"
-            export ARCH="arm64"
-          fi
-
-          PRIVATE_IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$PRIVATE_IMAGE_NAME"
-          PRIVATE_IMAGE_ID=$(echo $PRIVATE_IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          docker buildx build --platform "$PLATFORM" \
-            --annotation "manifest:org.opencontainers.image.description=Simple file transfer service" \
-            -t "$PRIVATE_IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
-
-          echo "private-image-id=$PRIVATE_IMAGE_ID" >> "$GITHUB_OUTPUT"
 
   build-frontend:
+    needs: setup-version
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
     steps:
       - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup-frontend
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          working-directory: ./frontend
-      - run: pnpm install
-      - name: Build public frontend
-        run: NEXT_TELEMETRY_DISABLED=1 pnpm build
-      - name: Upload frontend output
-        uses: actions/upload-artifact@v4
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: image-vars
+        name: Setup variable for image
+        run: |
+          IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_FRONTEND_NAME"
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          echo "image-id=$IMAGE_ID" >> "$GITHUB_OUTPUT"
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          name: frontend-nextjs
-          path: |
-            ./frontend/out/
+          # list of Docker images to use as base name for tags
+          images: ${{ steps.image-vars.outputs.image-id }}:${{ need.setup-version.outputs.version }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          annotations: ${{ steps.meta.outputs.annotations }}
   build-backend:
     needs:
       - setup-version
       - build-frontend
-    strategy:
-      matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -119,11 +128,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-backend
-      - name: Download frontend
-        uses: actions/download-artifact@v5
-        with:
-          name: frontend-nextjs
-          path: ./src/main/resources/public
       - name: Build with Gradle Wrapper
         run: ./gradlew build
       - name: Save artifact
@@ -135,59 +139,34 @@ jobs:
             ./build/libs/shorturl-*.jar
             !./build/libs/shorturl-*-plain.jar
           compression-level: 0
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
-      - id: build-image
-        name: Build image and push image
-        env:
-          VERSION: ${{ needs.setup-version.outputs.version }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup variable for image
         run: |
-          if [[ "$RUNNER_ARCH" == "X64" ]]; then
-            export PLATFORM="linux/amd64"
-            export ARCH="amd64"
-          elif [[ "$RUNNER_ARCH" == "ARM64" ]]; then
-            export PLATFORM="linux/arm64"
-            export ARCH="arm64"
-          fi
-
           IMAGE_ID="$REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME"
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker buildx build --platform "$PLATFORM" \
-            --annotation "manifest:org.opencontainers.image.description=Simple file transfer service" \
-            -t "$IMAGE_ID:$VERSION-$ARCH" --push --label "runnumber=${GITHUB_RUN_ID}" .
           echo "image-id=$IMAGE_ID" >> "$GITHUB_OUTPUT"
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: ${{ steps.meta.outputs.image-id }}:${{ need.setup-version.outputs.version }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-  reassemble-image:
-    runs-on: ubuntu-latest
-    needs:
-      - setup-version
-      - build-backend
-      - build-private
-    permissions:
-      contents: read
-      packages: write
-    env:
-      VERSION: ${{ needs.setup-version.outputs.version }}
-      IMAGE_ID: ${{ needs.build-backend.outputs.image-id }}
-      PRIVATE_IMAGE_ID: ${{ needs.build-private.outputs.private-image-id }}
-    steps:
-      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
-      - run: |
-          echo 'CURL_CMD=curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28"' >> "$GITHUB_ENV"
-      - name: Reassemble images in one multi arch image on public package
-        run: |
-          docker buildx imagetools create \
-            -t $IMAGE_ID:$VERSION \
-            "$IMAGE_ID:$VERSION-amd64" \
-            "$IMAGE_ID:$VERSION-arm64"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Reassemble images in one multi arch image on private package
-        run: |
-          docker buildx imagetools create \
-            -t $PRIVATE_IMAGE_ID:$VERSION \
-            "$PRIVATE_IMAGE_ID:$VERSION-amd64" \
-            "$PRIVATE_IMAGE_ID:$VERSION-arm64"
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
