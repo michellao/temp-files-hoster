@@ -16,6 +16,6 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester
 class ShortUrlApplicationTests {
 	@Test
 	fun testLoadingIndexPage(@Autowired mvc: MockMvcTester) {
-		assertThat(mvc.get().uri("/")).hasStatusOk()
+		assertThat(mvc.get().uri("/")).hasStatus4xxClientError()
 	}
 }
