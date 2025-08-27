@@ -16,14 +16,14 @@ let nextConfig: NextConfig = {
   },
   async rewrites() {
     return {
-        afterFiles: [
-            {
-                source: '/:path*',
-                destination: `${process.env.BACKEND_URL}/:path*`
-            }
-        ]
+      afterFiles: [
+        {
+          source: "/:path*",
+          destination: `${process.env.BACKEND_URL}/:path*`,
+        },
+      ],
     };
-  }
+  },
 };
 
 if (

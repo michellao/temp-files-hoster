@@ -2,11 +2,11 @@
 import { UploadIcon } from "@radix-ui/react-icons";
 import { Flex, Text } from "@radix-ui/themes";
 import type React from "react";
+import { useId } from "react";
 import Section from "./section";
 import styles from "./section-style.module.css";
 import TextSubtle from "./text-subtle";
 import UploadButton from "./upload-button";
-import { useId } from "react";
 
 export default function UploadFiles({
   addFile,
