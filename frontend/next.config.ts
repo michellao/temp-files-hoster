@@ -10,6 +10,7 @@ requiredEnvVars.forEach((envVar) => {
 });
 
 let nextConfig: NextConfig = {
+  output: "standalone",
   devIndicators: false,
   experimental: {
     typedEnv: true,
@@ -18,8 +19,8 @@ let nextConfig: NextConfig = {
     return {
       afterFiles: [
         {
-          source: "/:path*",
-          destination: `${process.env.BACKEND_URL}/:path*`,
+          source: "/:slug",
+          destination: `${process.env.BACKEND_URL}/:slug`,
         },
       ],
     };
