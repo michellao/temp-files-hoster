@@ -20,7 +20,7 @@ export default function UploadFiles({
   const inputId = useId();
 
   const triggerFileInput = () => {
-    document.getElementById("file-upload")?.click();
+    document.getElementById(inputId)?.click();
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
