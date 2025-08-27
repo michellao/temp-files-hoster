@@ -6,7 +6,7 @@ let nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
     typedEnv: true,
-  }
+  },
 };
 
 if (

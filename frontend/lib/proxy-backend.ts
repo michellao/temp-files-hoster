@@ -1,5 +1,8 @@
-export default function proxyBackend(request: Request, slug?: string): Promise<Response> {
-  const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8080"
+export default function proxyBackend(
+  request: Request,
+  slug?: string,
+): Promise<Response> {
+  const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8080";
   let proxyUrl = new URL(backendUrl);
   if (slug) {
     proxyUrl = new URL(slug, backendUrl);
@@ -11,7 +14,7 @@ export default function proxyBackend(request: Request, slug?: string): Promise<R
     const message =
       reason instanceof Error ? reason.message : "Unexpected exception";
     return new Promise((resolve) => {
-      resolve(new Response(message, { status: 500 }))
+      resolve(new Response(message, { status: 500 }));
     });
   }
 }
