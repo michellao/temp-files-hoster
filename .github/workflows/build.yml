@@ -16,19 +16,7 @@ env:
   PRIVATE_IMAGE_NAME: my-files-hoster
   REGISTRY: ghcr.io
 jobs:
-  setup-version:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.first.outputs.version }}
-    steps:
-      - id: first
-        run: |
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          [[ "$VERSION" == "main" ]] && VERSION=latest
-          echo version=$VERSION >> "$GITHUB_OUTPUT"
   build-private:
-    needs: setup-version
     environment: Production
     runs-on: ubuntu-latest
     permissions:
@@ -54,7 +42,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
-          images: ${{ steps.private-image-vars.outputs.private-image-id }}:${{ needs.setup-version.outputs.version }}
+          images: ${{ steps.private-image-vars.outputs.private-image-id }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -75,7 +63,6 @@ jobs:
           NEXT_PUBLIC_DMCA_EMAIL: ${{ vars.NEXT_PUBLIC_DMCA_EMAIL }}
 
   build-frontend:
-    needs: setup-version
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -100,7 +87,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
-          images: ${{ steps.image-vars.outputs.image-id }}:${{ needs.setup-version.outputs.version }}
+          images: ${{ steps.image-vars.outputs.image-id }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -116,15 +103,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           annotations: ${{ steps.meta.outputs.annotations }}
   build-backend:
-    needs:
-      - setup-version
-      - build-frontend
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    outputs:
-      image-id: ${{ steps.build-image.outputs.image-id }}
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-backend
@@ -156,7 +138,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
-          images: ${{ steps.meta.outputs.image-id }}:${{ needs.setup-version.outputs.version }}
+          images: ${{ steps.meta.outputs.image-id }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
