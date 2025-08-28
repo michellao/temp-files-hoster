@@ -57,11 +57,11 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-        env:
-          NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-          NEXT_PUBLIC_DMCA_EMAIL: ${{ vars.NEXT_PUBLIC_DMCA_EMAIL }}
+          build-args: |
+            NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+            NEXT_PUBLIC_DMCA_EMAIL=${{ vars.NEXT_PUBLIC_DMCA_EMAIL }}
+            SENTRY_ORG=${{ vars.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ vars.SENTRY_PROJECT }}
 
   build-frontend:
     runs-on: ubuntu-latest
