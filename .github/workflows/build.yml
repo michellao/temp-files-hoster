@@ -58,10 +58,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
-            NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
-            NEXT_PUBLIC_DMCA_EMAIL=${{ vars.NEXT_PUBLIC_DMCA_EMAIL }}
-            SENTRY_ORG=${{ vars.SENTRY_ORG }}
-            SENTRY_PROJECT=${{ vars.SENTRY_PROJECT }}
+            NEXT_PUBLIC_SENTRY_DSN
+            NEXT_PUBLIC_DMCA_EMAIL
+            SENTRY_ORG
+            SENTRY_PROJECT
+        env:
+          NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+          NEXT_PUBLIC_DMCA_EMAIL: ${{ vars.NEXT_PUBLIC_DMCA_EMAIL }}
 
   build-frontend:
     runs-on: ubuntu-latest
