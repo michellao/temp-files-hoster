@@ -14,6 +14,9 @@ Sentry.init({
   // https://docs.sentry.io/platforms/javascript/configuration/options/#traces-sample-rate
   tracesSampleRate: 1.0,
 
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
+
   // ...
 
   // Note: if you want to override the automatic release value, do not set a
