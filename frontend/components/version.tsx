@@ -1,6 +1,8 @@
+import { connection } from "next/server";
 import * as z from "zod/mini";
 
 export default async function Version() {
+  connection();
   const backendUrl = process.env.BACKEND_URL;
   if (backendUrl) {
     const VersionModel = z.object({
