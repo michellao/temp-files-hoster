@@ -16,20 +16,22 @@ body {
     padding: 0;
 }
 
-main > div:not(:last-child) {
-    margin-bottom: 24px;
-}
-
 main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    > div:not(:last-child) {
+        margin-bottom: 24px;
+    }
 }
 
 footer {
     margin-top: 48px;
-}
-
-footer > div {
-    border-top: 1px solid var(--gray-6);
+    > div {
+        font-size: 12px;
+        border-top: 1px solid var(--gray-6);
+        div {
+            padding: var(--space-1);
+        }
+    }
 }
