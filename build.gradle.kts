@@ -6,7 +6,7 @@ plugins {
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
 }
 
-group = "com.example"
+group = "me.michelao"
 version = "0.1.0"
 
 java {
