@@ -23,6 +23,7 @@ dependencies {
     val springCloudAwsVersion = "3.4.0"
     implementation(platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}"))
     implementation("io.awspring.cloud:spring-cloud-aws-starter-s3")
+    implementation("software.amazon.encryption.s3:amazon-s3-encryption-client-java:3.4.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
