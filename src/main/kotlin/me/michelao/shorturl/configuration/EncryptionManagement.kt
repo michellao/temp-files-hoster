@@ -1,5 +1,6 @@
 package me.michelao.shorturl.configuration
 
+import me.michelao.shorturl.configuration.properties.MyAppProperties
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
@@ -9,8 +10,10 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.io.path.writeText
 
-class EncryptionManagement {
-    private val pathFile = "./secret.key"
+class EncryptionManagement(
+    appProperties: MyAppProperties
+) {
+    private val pathFile = appProperties.secretKeyPath
     private val algorithm = "AES"
     private val bits = 256
     lateinit var key: SecretKey

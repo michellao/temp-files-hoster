@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration
 class MyAppProperties {
     lateinit var baseUrl: String
     lateinit var bucketName: String
+    var secretKeyPath: String = "./secret.key"
     val expiration = Expiration()
     class Expiration {
         var minDays: Int = 30
