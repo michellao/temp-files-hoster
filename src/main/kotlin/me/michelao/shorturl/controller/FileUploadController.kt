@@ -8,6 +8,7 @@ import me.michelao.shorturl.datasource.Url
 import me.michelao.shorturl.datasource.service.UrlService
 import me.michelao.shorturl.tools.ExpirationCalculator
 import jakarta.servlet.http.HttpServletRequest
+import me.michelao.shorturl.tools.WebTools
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -29,16 +30,6 @@ class FileUploadController(
     private val expirationCalculator: ExpirationCalculator,
 ) {
     private val logger = Logger.getLogger(this.javaClass.name)
-    fun readRealIp(request: HttpServletRequest): String {
-        var ip: String? = request.getHeader("x-forwarded-for")
-        if (ip == null) {
-            ip = request.getHeader("x-real-ip")
-        }
-        if (ip == null) {
-            ip = request.remoteAddr
-        }
-        return ip
-    }
 
     @PostMapping("/", produces = [MediaType.TEXT_PLAIN_VALUE])
     @CrossOrigin(exposedHeaders = ["X-Token"])
@@ -66,7 +57,7 @@ class FileUploadController(
                     return ResponseEntity.badRequest().body("The expiry date has exceeded the maximum age")
                 }
             }
-            val realIp = readRealIp(request)
+            val realIp = WebTools.readRealIp(request)
             val token = UrlHandler.generatorToken()
             logger.info("IP: $realIp, Upload filename: $originalFileName")
             val url = Url(

@@ -1,14 +1,17 @@
 package me.michelao.shorturl.controller
 
+import jakarta.servlet.http.HttpServletRequest
 import me.michelao.shorturl.datasource.S3ClientData
 import me.michelao.shorturl.datasource.service.UrlService
 import me.michelao.shorturl.tools.ExpirationCalculator
+import me.michelao.shorturl.tools.WebTools
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import java.util.Date
 import java.util.logging.Logger
@@ -22,8 +25,13 @@ class UrlController(
     private val logger = Logger.getLogger(this.javaClass.name)
 
     @GetMapping("/{generatedUrl}", produces = [MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE])
-    fun getFile(@PathVariable("generatedUrl") generatedUrl: String): ResponseEntity<ByteArray> {
-        logger.info("Try access to: $generatedUrl")
+    fun getFile(
+        @RequestHeader("User-Agent") userAgent: String?,
+        @PathVariable("generatedUrl") generatedUrl: String,
+        request: HttpServletRequest
+    ): ResponseEntity<ByteArray> {
+        val realIp = WebTools.readRealIp(request)
+        logger.info("$userAgent | $realIp GET: '$generatedUrl'")
         service.findByUrl("/$generatedUrl")?.let { url ->
             val rawData = s3.readData(url)
             return rawData
@@ -38,7 +46,7 @@ class UrlController(
         @RequestParam("delete") delete: String? = null,
         @RequestParam("expires") expires: Date? = null
     ): ResponseEntity<String> {
-        logger.info("Try deleted: $generatedUrl")
+        logger.info("'$generatedUrl' has been deleted")
         service.findByUrl("/$generatedUrl")?.let { url ->
             if (token == url.token) {
                 if (delete != null) {
@@ -47,7 +55,6 @@ class UrlController(
                     service.delete(url)
                     return ResponseEntity.accepted().build()
                 }
-
                 if (expires != null) {
                     if (expirationCalculator.testExpireUnderLimit(expires)) {
                         url.expiresAt = expires
