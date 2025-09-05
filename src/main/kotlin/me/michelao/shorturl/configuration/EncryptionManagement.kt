@@ -16,7 +16,7 @@ class EncryptionManagement(
     private val pathFile = appProperties.secretKeyPath
     private val algorithm = "AES"
     private val bits = 256
-    lateinit var key: SecretKey
+    private lateinit var key: SecretKey
     private val keyGenerator = KeyGenerator.getInstance(algorithm)
 
     fun autoSetup() {

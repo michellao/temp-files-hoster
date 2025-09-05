@@ -28,7 +28,7 @@ class S3ClientData(
     init {
         val encryptionManagement = EncryptionManagement(appProperties)
         encryptionManagement.autoSetup()
-        val aesKey = encryptionManagement.key
+        val aesKey = encryptionManagement.getSecretKey()
         val region = Region.of(s3Properties.region)
         s3ClientEncryption = S3EncryptionClient.builder()
             .region(region)
