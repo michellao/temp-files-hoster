@@ -3,13 +3,16 @@ package me.michelao.shorturl.datasource
 import io.awspring.cloud.autoconfigure.s3.properties.S3Properties
 import me.michelao.shorturl.configuration.EncryptionManagement
 import me.michelao.shorturl.configuration.properties.MyAppProperties
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
+import software.amazon.awssdk.core.ResponseInputStream
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.GetObjectResponse
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectResponse
 import software.amazon.encryption.s3.S3EncryptionClient
@@ -40,30 +43,42 @@ class S3ClientData(
 
     private val bucketName: String = appProperties.bucketName
 
-    fun readData(url: Url): ResponseEntity<ByteArray> {
-        val response = try {
-            s3ClientEncryption.getObject { request ->
-                request.bucket(bucketName).key(url.urlPath)
+    private fun getS3Object(key: String): Pair<ResponseInputStream<GetObjectResponse>, Boolean> {
+        return try {
+            val response = s3ClientEncryption.getObject { request ->
+                request.bucket(bucketName).key(key)
             }
+            response to true
         } catch (e: S3EncryptionClientException) {
             logger.info("Read an unencrypted data")
-            s3Client.getObject { request ->
-                request.bucket(bucketName).key(url.urlPath)
+            val response = s3Client.getObject { request ->
+                request.bucket(bucketName).key(key)
             }
+            response to false
         }
+    }
+
+    fun readData(url: Url): ResponseEntity<InputStreamResource> {
+        var contentLength = 0L
+        val (response, isEncrypted) = getS3Object(url.urlPath)
         val objectMetadata = response.response()
         val contentType = MediaType.valueOf(objectMetadata.contentType() ?: MediaType.APPLICATION_OCTET_STREAM_VALUE)
-        val data = response.readBytes()
+        if (isEncrypted) {
+            contentLength = url.sizeBytes
+        } else {
+            contentLength = objectMetadata.contentLength()
+        }
+        val data = InputStreamResource(response)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${url.originalFilename}")
             .contentType(contentType)
-            .contentLength(data.size.toLong())
+            .contentLength(contentLength)
             .body(data)
     }
 
-    fun writeData(k: String, inputStream: InputStream, contentType: String): PutObjectResponse? {
+    fun writeData(k: String, inputStream: InputStream, contentLength: Long, contentType: String): PutObjectResponse? {
         val putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(k).contentType(contentType).build()
-        val requestBody = RequestBody.fromBytes(inputStream.readBytes())
+        val requestBody = RequestBody.fromInputStream(inputStream, contentLength)
         val response = s3ClientEncryption.putObject(putObjectRequest, requestBody)
         return response
     }

@@ -5,6 +5,7 @@ import me.michelao.shorturl.datasource.S3ClientData
 import me.michelao.shorturl.datasource.service.UrlService
 import me.michelao.shorturl.tools.ExpirationCalculator
 import me.michelao.shorturl.tools.WebTools
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -29,7 +30,7 @@ class UrlController(
         @RequestHeader("User-Agent") userAgent: String?,
         @PathVariable("generatedUrl") generatedUrl: String,
         request: HttpServletRequest
-    ): ResponseEntity<ByteArray> {
+    ): ResponseEntity<InputStreamResource> {
         val realIp = WebTools.readRealIp(request)
         logger.info("$userAgent | $realIp GET: '$generatedUrl'")
         service.findByUrl("/$generatedUrl")?.let { url ->

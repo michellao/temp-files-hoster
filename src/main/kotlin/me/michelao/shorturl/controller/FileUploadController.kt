@@ -39,7 +39,7 @@ class FileUploadController(
         request: HttpServletRequest,
         @RequestParam("file") file: MultipartFile,
         @RequestParam("expires") expires: Date? = null
-    ): Any {
+    ): ResponseEntity<String> {
         if (!file.isEmpty) {
             val contentType = file.contentType ?: MediaType.APPLICATION_OCTET_STREAM.toString()
             val originalFileName = file.originalFilename
@@ -64,14 +64,14 @@ class FileUploadController(
                 originalFileName,
                 "/$generatedUrl",
                 MimeType.fromValue(contentType),
-                sizeMebibytes.toLong(),
+                file.size,
                 token,
                 realIp,
                 userAgent,
                 expiresConverted
             )
             service.save(url)
-            s3.writeData(generatedUrl, file.inputStream, contentType)
+            s3.writeData(generatedUrl, file.inputStream, file.size, contentType)
             return ResponseEntity
                 .ok()
                 .headers {

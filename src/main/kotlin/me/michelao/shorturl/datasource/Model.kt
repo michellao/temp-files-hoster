@@ -4,6 +4,7 @@ import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.annotation.Id
 import org.springframework.data.mapping.MappingException
 import java.util.Date
+import kotlin.math.pow
 
 data class AboutApp(
     val branch: String,
@@ -24,7 +25,7 @@ data class Url(
     val originalFilename: String?,
     val urlPath: String,
     val contentType: MimeType,
-    val sizeMebiBytes: Long,
+    val sizeBytes: Long,
     val token: String,
     val ipAddress: String,
     val userAgent: String?,
@@ -32,8 +33,8 @@ data class Url(
     @Id var id: Int? = null
 ) {
     init {
-        if (sizeMebiBytes > 512L) {
-             throw MappingException("File must be smaller than 512 MiB")
+        if (sizeBytes > 500e6) {
+             throw MappingException("File must be smaller than 500 MB")
         }
     }
 }

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS url (
     original_filename VARCHAR(48),
     url_path VARCHAR(32),
     content_type VARCHAR(32) NOT NULL,
-    size_mebi_bytes INTEGER NOT NULL,
+    size_bytes INTEGER NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     token VARCHAR(32) NOT NULL,
     ip_address VARCHAR(40) NOT NULL,
