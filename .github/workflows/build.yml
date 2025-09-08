@@ -167,6 +167,7 @@ jobs:
           images: ${{ steps.image-vars.outputs.image-id }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
