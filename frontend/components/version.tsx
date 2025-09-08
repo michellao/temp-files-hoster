@@ -1,6 +1,8 @@
+import { connection } from "next/server";
 import * as z from "zod/mini";
 
 export default async function Version() {
+  connection();
   const backendUrl = process.env.BACKEND_URL;
   if (backendUrl) {
     const VersionModel = z.object({
@@ -9,16 +11,12 @@ export default async function Version() {
       commit: z.string(),
     });
     const response = await fetch(`${backendUrl}/app/version`, {
-      cache: "force-cache"
+      cache: "force-cache",
     });
     try {
       const responseJson = await response.json();
       const appVersion = VersionModel.parse(responseJson);
-      return (
-        <div>
-          Build: { appVersion.commit }
-        </div>
-      );
+      return <div>Build: {appVersion.commit}</div>;
     } catch (error: unknown) {
       console.error("error parsing", error);
     }
