@@ -8,6 +8,7 @@ import kotlin.io.encoding.Base64
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
+import kotlin.io.path.reader
 import kotlin.io.path.writeText
 
 class EncryptionManagement(
@@ -39,8 +40,8 @@ class EncryptionManagement(
     }
 
     fun readFromFile() {
-        val inputStream = Path(pathFile).inputStream()
-        val keyDecoded = Base64.decode(inputStream.readBytes())
+        val secretData = Path(pathFile).reader().readText().trim()
+        val keyDecoded = Base64.decode(secretData)
         key = SecretKeySpec(keyDecoded, algorithm)
     }
 
