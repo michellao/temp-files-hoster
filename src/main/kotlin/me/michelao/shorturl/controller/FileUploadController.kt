@@ -9,6 +9,7 @@ import me.michelao.shorturl.datasource.service.UrlService
 import me.michelao.shorturl.tools.ExpirationCalculator
 import jakarta.servlet.http.HttpServletRequest
 import me.michelao.shorturl.tools.WebTools
+import org.apache.tika.Tika
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -41,7 +42,8 @@ class FileUploadController(
         @RequestParam("expires") expires: Date? = null
     ): ResponseEntity<String> {
         if (!file.isEmpty) {
-            val contentType = file.contentType ?: MediaType.APPLICATION_OCTET_STREAM.toString()
+            val tika = Tika()
+            val contentType = tika.detect(file.inputStream)
             val originalFileName = file.originalFilename
             val sizeMebibytes = file.size / 2.0.pow(20)
             var generatedUrl: String
@@ -60,6 +62,7 @@ class FileUploadController(
             val realIp = WebTools.readRealIp(request)
             val token = UrlHandler.generatorToken()
             logger.info("IP: $realIp, Upload filename: $originalFileName")
+            logger.info("Content type detected: $contentType")
             val url = Url(
                 originalFileName,
                 "/$generatedUrl",
