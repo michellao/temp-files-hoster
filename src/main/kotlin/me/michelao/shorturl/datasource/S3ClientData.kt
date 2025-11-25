@@ -62,18 +62,22 @@ class S3ClientData(
         var contentLength = 0L
         val (response, isEncrypted) = getS3Object(url.urlPath)
         val objectMetadata = response.response()
-        val contentType = MediaType.valueOf(objectMetadata.contentType() ?: MediaType.APPLICATION_OCTET_STREAM_VALUE)
+        val contentType = MediaType.valueOf(url.contentType.toString())
         if (isEncrypted) {
             contentLength = url.sizeBytes
         } else {
             contentLength = objectMetadata.contentLength()
         }
         val data = InputStreamResource(response)
-        return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${url.originalFilename}")
+        val responseEntity = ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
             .contentType(contentType)
             .contentLength(contentLength)
-            .body(data)
+        if (contentType.type == MediaType.APPLICATION_OCTET_STREAM_VALUE) {
+            responseEntity
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${url.originalFilename}")
+        }
+        return responseEntity.body(data)
     }
 
     fun writeData(k: String, inputStream: InputStream, contentLength: Long, contentType: String): PutObjectResponse? {
